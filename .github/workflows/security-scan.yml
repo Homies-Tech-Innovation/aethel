@@ -1,0 +1,80 @@
+name: Security Scan
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  codeql-analysis:
+    name: CodeQL Security Scan
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["javascript", "python"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  snyk-scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          if [ -f "package-lock.json" ]; then
+            npm ci
+          elif [ -f "package.json" ]; then
+            npm install
+          fi
+          if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt
+          fi
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@v3
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+        continue-on-error: true
+
+      - name: Fail if vulnerabilities found
+        if: failure()
+        run: |
+          echo "❌ Vulnerabilities detected by Snyk! Failing the workflow."
+          exit 1
+
+      - name: Comment on PR if vulnerabilities found
+        if: failure()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: snyk-scan
+          message: |
+            ⚠️ Security vulnerabilities were found during dependency scanning.
+            Please review and fix them before merging.

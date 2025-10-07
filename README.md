@@ -99,3 +99,18 @@ Made with ❤️ by the Aethel Community.
 [discord-url]: https://discord.com/invite/HP2YPGSrWU
 [release-shield]: https://img.shields.io/github/v/release/Homies-Tech-Innovation/aethel?include_prereleases
 [release-url]: ./releases
+
+### 🔒 Security Scanning
+
+This project uses GitHub Actions to automatically scan dependencies for vulnerabilities using:
+
+- **CodeQL** (built-in)
+- **Snyk** (requires `SNYK_TOKEN` secret)
+
+To enable Snyk locally:
+
+```bash
+npm install -g snyk
+snyk auth <your_token>
+snyk test
+```
