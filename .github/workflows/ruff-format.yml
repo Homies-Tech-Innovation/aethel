@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+# Cancels outdated runs of this workflow on the same PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
   pull-requests: write
@@ -12,12 +17,11 @@ permissions:
 jobs:
   ruff:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
@@ -29,22 +33,21 @@ jobs:
         run: pip install ruff
 
       - name: Run Ruff formatter
-        id: ruff
-        run: |
-          ruff format .
-          if [ -n "$(git status --porcelain)" ]; then
-            git config --global user.name "github-actions[bot]"
-            git config --global user.email "github-actions[bot]@users.noreply.github.com"
-            git add .
-            git commit -m "chore: format Python files with Ruff"
-            git push
-          fi
+        run: ruff format .
 
-      - name: Count formatted files
-        id: count
+      - name: Check for modified files
+        id: git-check
+        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
+
+      - name: Commit and push changes
+        if: steps.git-check.outputs.modified == 'true'
         run: |
-          FILES_CHANGED=$(git diff --name-only HEAD^ HEAD | grep '\.py$' | wc -l || echo 0)
-          echo "count=$FILES_CHANGED" >> $GITHUB_OUTPUT
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          # This commit message includes [skip ci] to prevent re-triggering workflows
+          git commit -m "chore: format Python files with Ruff [skip ci]"
+          git push
 
       - name: Comment on PR
         if: always()
@@ -53,4 +56,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            ${{ steps.count.outputs.count == '0' && '✅ No Python files formatted.' || format('✨ {0} Python files formatted and committed back to the branch.', steps.count.outputs.count) }}
+            ${{ steps.git-check.outputs.modified == 'true' && '✨ Python files formatted and committed back to the branch.' || '✅ No Python files needed formatting.' }}
