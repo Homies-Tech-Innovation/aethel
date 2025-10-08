@@ -1,37 +1,37 @@
 name: Prettier Format Check
-
 on:
   pull_request:
     branches:
       - main
 
 permissions:
-  contents: write  
+  contents: write
   pull-requests: write
 
 jobs:
   prettier:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run Prettier Action
-        id: prettier
-        uses: peter-evans/prettier-action@v2
-        with:
-          prettier-options: --write "**/*.{js,jsx,ts,tsx,json,md,yml,yaml}"
-          commit-message: "chore: format code with Prettier"
+      - name: Run Prettier
+        run: npx prettier --write "**/*.{js,jsx,ts,tsx,json,md,yml,yaml}"
 
-      - name: Count formatted files
-        id: count
+      - name: Check for modified files
+        id: git-check
+        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
+
+      - name: Commit and push changes
+        if: steps.git-check.outputs.modified == 'true'
         run: |
-          FILES_CHANGED=$(git diff --name-only HEAD^ HEAD | wc -l || echo 0)
-          echo "count=$FILES_CHANGED" >> $GITHUB_OUTPUT
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git commit -am "chore: format code with Prettier"
+          git push
 
       - name: Comment on PR
         if: always()
@@ -40,4 +40,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            ${{ steps.count.outputs.count == '0' && '✅ No files formatted.' || format('✨ {0} files formatted and committed back to the branch.', steps.count.outputs.count) }}
+            ${{ steps.git-check.outputs.modified == 'true' && '✨ Files formatted and committed back to the branch.' || '✅ No files needed formatting.' }}

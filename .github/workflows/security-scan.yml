@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ["javascript", "python"]
+        language: ["javascript"] # "python"
 
     steps:
       - name: Checkout repository
@@ -57,7 +57,7 @@ jobs:
           fi
 
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@v3
+        uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:

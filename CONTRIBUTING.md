@@ -45,7 +45,6 @@ If multiple contributors submit PRs for the same issue, high-quality and genuine
    `<concise-name>/issue-<issue-number>`
 3. **Commit and push** your changes.
 4. **Open a PR** and fill in the PR template thoroughly.
-5. **Assign a reviewer** from [./.github/CODEOWNERS](./.github/CODEOWNERS).
 
 ## 🌟 Getting Priority Review
 
