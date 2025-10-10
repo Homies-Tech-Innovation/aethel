@@ -34,8 +34,17 @@
     - research various implementations
     - after a given time a request is sent to backend for autosave and also store in localstorage for undo
 
+---
+
+7. - any ui libs for components
+    - any other libs for smaller tasks
+
 ---   
 
-7. - add to thid list when we get info or docs of bg. 
+8. - update in designs include new channges and tabs ui and login ui.
+
+---
+
+9. - add to thid list when we get info or docs of bg. 
 
     - add your resurch to draft file. 
