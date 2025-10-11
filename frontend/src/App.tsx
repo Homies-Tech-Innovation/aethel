@@ -67,7 +67,7 @@ function MemberCard({ username, name }: Member) {
 			href={`https://github.com/${username}`}
 			target="_blank"
 			rel="noopener noreferrer"
-			className="bg-gray-800 rounded-xl p-8 text-center hover:bg-gray-750 transition-all hover:scale-105 hover:shadow-xl"
+			className="bg-gray-800 rounded-xl p-8 text-center hover:bg-gray-750 transition-all shadow-2xl hover:scale-105 hover:shadow-xl"
 		>
 			<img
 				src={stats?.avatar_url || `https://github.com/${username}.png`}
