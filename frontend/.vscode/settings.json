@@ -1,27 +1,27 @@
 {
-	"typescript.preferences.importModuleSpecifier": "non-relative",
-	"javascript.preferences.importModuleSpecifier": "non-relative",
-	"typescript.preferences.importModuleSpecifierEnding": "minimal",
-	"javascript.preferences.importModuleSpecifierEnding": "minimal",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.importModuleSpecifierEnding": "minimal",
+  "javascript.preferences.importModuleSpecifierEnding": "minimal",
 
-	// Force VSCode to use workspace TypeScript version
-	"typescript.tsdk": "node_modules/typescript/lib",
-	"typescript.enablePromptUseWorkspaceTsdk": true,
+  // Force VSCode to use workspace TypeScript version
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
 
-	// Auto-import preferences
-	"typescript.preferences.includePackageJsonAutoImports": "on",
-	"javascript.preferences.includePackageJsonAutoImports": "on",
+  // Auto-import preferences
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "javascript.preferences.includePackageJsonAutoImports": "on",
 
-	// Update imports on file move
-	"typescript.updateImportsOnFileMove.enabled": "always",
-	"javascript.updateImportsOnFileMove.enabled": "always",
+  // Update imports on file move
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always",
 
-	// Suggest paths
-	"typescript.suggest.paths": true,
-	"javascript.suggest.paths": true,
+  // Suggest paths
+  "typescript.suggest.paths": true,
+  "javascript.suggest.paths": true,
 
-	// Sort imports
-	"editor.codeActionsOnSave": {
-		"source.organizeImports": "explicit"
-	}
+  // Sort imports
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  }
 }
