@@ -10,7 +10,7 @@ servers:
 
 paths:
   # ============================================
-  # AUTH ENDPOINTS (Unchanged)
+  # AUTH ENDPOINTS
   # ============================================
   /auth/register:
     post:
@@ -214,7 +214,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
 
   # ============================================
-  # USER ENDPOINTS (Unchanged)
+  # USER ENDPOINTS
   # ============================================
   /users/me:
     get:
@@ -278,7 +278,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
 
   # ============================================
-  # WORKSPACE ENDPOINTS (NEW)
+  # WORKSPACE ENDPOINTS
   # ============================================
   /workspace/hierarchy:
     get:
@@ -301,7 +301,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
 
   # ============================================
-  # FOLDER ENDPOINTS (CRUD operations, GET all removed)
+  # FOLDER ENDPOINTS
   # ============================================
   /folders:
     post:
@@ -428,7 +428,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
 
   # ============================================
-  # DOCUMENT ENDPOINTS (CRUD operations, GET all removed)
+  # DOCUMENT ENDPOINTS
   # ============================================
   /documents:
     post:
@@ -561,7 +561,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
 
   # ============================================
-  # IMAGE ENDPOINTS (Unchanged)
+  # IMAGE ENDPOINTS
   # ============================================
   /images:
     post:
@@ -646,7 +646,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
 
   # ============================================
-  # AI ENDPOINTS (NEW)
+  # AI ENDPOINTS
   # ============================================
   /ai/chat:
     post:
