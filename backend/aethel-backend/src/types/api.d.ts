@@ -434,6 +434,57 @@ export interface paths {
         };
         trace?: never;
     };
+    "/users/me/avatar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Current User's Avatar
+         * @description Updates the avatar URL for the authenticated user.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /**
+                         * Format: uri
+                         * @example https://cdn.example.com/avatars/user123.png
+                         */
+                        avatar_url: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Avatar updated successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"];
+                    };
+                };
+                400: components["responses"]["BadRequest"];
+                401: components["responses"]["Unauthorized"];
+            };
+        };
+        trace?: never;
+    };
     "/workspace/hierarchy": {
         parameters: {
             query?: never;
@@ -1186,6 +1237,8 @@ export interface components {
             display_name?: string;
             /** Format: email */
             email?: string;
+            /** Format: uri */
+            avatar_url?: string | null;
             /** Format: date-time */
             created_at?: string;
             /** Format: date-time */

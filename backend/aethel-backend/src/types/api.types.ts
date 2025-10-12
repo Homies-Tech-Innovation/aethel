@@ -42,6 +42,10 @@ export type GetCurrentUserResponse = components["schemas"]["User"];
 export type UpdateProfileRequest = paths["/users/me"]["patch"]["requestBody"]["content"]["application/json"];
 export type UpdateProfileResponse = components["schemas"]["User"];
 
+// PATCH /users/me/avatar
+export type UpdateAvatarRequest = paths["/users/me/avatar"]["patch"]["requestBody"]["content"]["application/json"];
+export type UpdateAvatarResponse = components["schemas"]["User"];
+
 // DELETE /users/me
 // No request or response body (204 No Content)
 
