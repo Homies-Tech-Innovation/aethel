@@ -1,136 +1,80 @@
 # 00: Core Architecture and Setup
 
-**Purpose:** This document defines the foundational technology stack, project structure, core patterns, and development environment for the Aethel application. All developers must adhere to these standards to ensure consistency and maintainability.
+**Purpose:** This document defines the foundational technology stack, project structure, core patterns, and development environment for the Aethel application. All developers must follow these standards to ensure consistency and maintainability.
 
 ## 1. Technology Stack
 
-The following tools have been selected for the project. There should be no deviation from this stack without formal approval.
+The following tools are required for the project. Any changes must be formally approved.
 
 - **Language:** Node.js with TypeScript
 - **Framework:** Express.js
 - **Database:** PostgreSQL
-- **ORM / Database Client:** Prisma ORM for database access, schema management, and migrations.
-- **API Contract Validation:** `express-openapi-validator` to enforce the OpenAPI contract at the middleware level.
+- **ORM:** Prisma (for database access, schema management, and migrations)
+- **API Validation:** `express-openapi-validator` (enforces OpenAPI contract at middleware level)
 - **Containerization:** Docker
 
 ## 2. Monorepo and Project Structure
 
-The project is organized as a monorepo containing multiple services. This guide focuses on the main `aethel-backend` service.
+The project uses a monorepo with multiple services. This guide focuses on the main `aethel-backend` service.
 
 ```
 backend/
 ├── aethel-backend/
 │   ├── src/
-│   │   ├── config/              # Typed environment variables and app configuration (config.ts)
-│   │   ├── controllers/         # Route handlers (e.g., auth.controller.ts)
-│   │   ├── middlewares/         # Custom Express middlewares (e.g., isAuthenticated.ts)
-│   │   ├── prisma/              # Prisma schema, client, and migrations
-│   │   ├── routes/              # Express route definitions (e.g., auth.routes.ts)
-│   │   ├── services/            # Business logic and external API integrations (e.g., user.service.ts)
-│   │   ├── types/               # Shared or generated TypeScript types
-│   │   ├── utils/               # Utility functions and helpers (e.g., logger.ts)
-│   │   └── index.ts             # Application entry point
-│   ├── .env                     # Local development environment variables (git-ignored)
-│   ├── .env.example             # Example environment variable template
-│   └── package.json             # Project dependencies and scripts
-├── .env.docker                 # For Docker Compose to configure the DB (git-ignored)
-├── .env.docker.example         # Template for .env.docker
-└── docker-compose.yml          # Spins up the database container only
+│   │   ├── config/         # Environment variables and app config
+│   │   ├── controllers/    # Route handlers
+│   │   ├── middlewares/    # Custom Express middlewares
+│   │   ├── prisma/         # Prisma schema, client, and migrations
+│   │   ├── routes/         # Express route definitions
+│   │   ├── services/       # Business logic and API integrations
+│   │   ├── types/          # Shared/generated TypeScript types
+│   │   ├── utils/          # Utility functions and helpers
+│   │   └── index.ts        # Application entry point
+│   ├── .env                # Local environment variables (git-ignored)
+│   ├── .env.example        # Example environment variables
+│   └── package.json        # Dependencies and scripts
+├── .env.docker             # Docker Compose DB config (git-ignored)
+├── .env.docker.example     # Example for .env.docker
+└── docker-compose.yml      # Spins up the database container only
 ```
 
 ## 3. Development Environment and Docker
 
-Docker Compose is used **exclusively** to run the PostgreSQL database in a consistent environment. The backend service itself **must** be run locally for development to ensure access to debugging tools and hot-reloading.
+Docker Compose is used **only** to run the PostgreSQL database. The backend service must be run locally for development to enable debugging and hot-reloading.
 
-### Required Daily Workflow
+See the [Docker Guide](../../backend/docker-guide.md) for details.
 
-This is the only workflow supported for local development.
-
-1.  **Configure the Database:**
-    In the project root (`backend/`), copy the example file to create your Docker environment file.
-
-    ```sh
-    cp .env.docker.example .env.docker
-    ```
-
-    Fill this file with the `POSTGRES_USER`, `POSTGRES_PASSWORD`, etc.
-
-2.  **Start the Database Container:**
-    From the project's root directory (`backend/`), run:
-
-    ```sh
-    docker-compose up -d
-    ```
-
-    This starts the PostgreSQL container and exposes its port `5432` to your `localhost`.
-
-3.  **Run the Backend Locally:**
-    Navigate to the backend service folder, create your local `.env` file, and start the server.
-    ```sh
-    cd aethel-backend
-    cp .env.example .env # And fill it with your app secrets (JWT, etc.)
-    npm install
-    npm run dev
-    ```
-    The local server will connect to the database running in Docker.
-
-### Environment Variable Management
-
-To make this hybrid workflow seamless, we use two separate configuration files.
-
-1.  **For Docker (`.env.docker` at the root):**
-    This file is **only** read by Docker Compose to configure the database container itself.
-
-    - **Example (`.env.docker.example`):**
-      ```bash
-      POSTGRES_USER=myuser
-      POSTGRES_PASSWORD=mypassword
-      POSTGRES_DB=aethel_db
-      ```
-
-2.  **For the Local Backend (`aethel-backend/.env`):**
-    This is the file your Node.js application reads when you run `npm run dev`. It contains your application secrets and the full connection string to the database.
-
-    - **Example (`aethel-backend/.env.example`):**
-
-      ```bash
-      # This URL connects to the database Docker exposes to your machine
-      DATABASE_URL="postgresql://myuser:mypassword@localhost:5432/aethel_db"
-
-      # Application-specific variables
-      PORT=3000
-      JWT_SECRET="your-long-random-jwt-secret"
-      JWT_EXPIRES_IN=15m
-      REFRESH_TOKEN_SECRET="your-different-long-random-secret"
-      REFRESH_TOKEN_EXPIRES_IN=7d
-      LOG_LEVEL=debug
-      ```
-
-> **Note:** This setup is intentional and restrictive for simplicity. When the project requires running the backend service inside Docker (e.g., for CI or a different testing strategy), this guide will be updated by the team lead.
+> **Note:** This setup is intentionally restrictive for simplicity. If running the backend in Docker becomes necessary (e.g., for CI or testing), this guide will be updated.
 
 ## 4. Database Schema Management
 
-- **Source of Truth:** The `aethel-backend/prisma/schema.prisma` file is the single source of truth for the database schema.
-- **Migrations:** Schema changes must be managed exclusively through Prisma's migration tool.
-  - **Command:** `npx prisma migrate dev` will be used to generate and apply new SQL migration files during development.
+- **Source of Truth:** `aethel-backend/prisma/schema.prisma`
+- **Migrations:** Use Prisma's migration tool for all schema changes.
+  - **Command:** `npx prisma migrate dev` (generates and applies migrations during development)
 
 ## 5. Error Handling
 
-A standardized approach to error handling is mandatory for a predictable API.
+A standardized error handling approach is required for a predictable API.
 
-- **Error Response Schema:** All errors returned to the client **must** conform to the `Error` schema defined in `openapi.yaml`.
-  ```json
-  {
-  	"error": "Bad Request",
-  	"message": "Email address is already in use."
-  }
-  ```
-- **Global Error Handler:** A single, global error handling middleware in Express will catch all errors, format them into the standard response, and send them to the client.
+- **Error Schema:** All errors returned to the client must conform to the `Error` schema in `types`.
+
+```ts
+import type { BadRequestError, UnauthorizedError, NotFoundError } from "@/types";
+```
+
+e.g.
+
+```ts
+throw new ApiError<BadRequestError>("Email is already in use");
+```
+
+- Implement a global `ApiError` class to raise errors, which are handled by a global error middleware.
+- The global error handler formats all errors into the standard response and sends them to the client.
 
 ## 6. Logging
 
-- **Library:** Pino.js will be used for structured, high-performance logging.
+- **Library:** Pino.js for structured, high-performance logging.
 - **Log Levels:** Controlled by the `LOG_LEVEL` environment variable.
-  - `info`: Log all incoming HTTP requests and their responses.
-  - `error`: Log all uncaught exceptions and handled operational errors.
-  - `debug`: Log important steps within service logic. Should be disabled in production.
+  - `info`: Log all HTTP requests and responses.
+  - `error`: Log uncaught exceptions and operational errors.
+  - `debug`: Log key steps in service logic (should be disabled in production).

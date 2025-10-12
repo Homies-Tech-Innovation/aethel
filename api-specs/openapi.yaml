@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Aethel API Contract
   version: 1.1.0
-  description: This is the Aethel API contract (v1.1.0), defining endpoints for authentication, user management, document hierarchy, AI-powered features, and other core services used by Aethel’s frontend and backend.
+  description: This is the Aethel API contract (v1.1.0), defining endpoints for authentication, user management, document hierarchy, AI-powered features, and other core services used by Aethel's frontend and backend.
 
 servers:
   - url: http://localhost:3000
@@ -246,6 +246,37 @@ paths:
       responses:
         "204":
           description: No Content - User successfully deleted
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /users/me/avatar:
+    patch:
+      summary: Update Current User's Avatar
+      description: Updates the avatar URL for the authenticated user.
+      tags:
+        - Users
+      security:
+        - CookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [avatar_url]
+              properties:
+                avatar_url:
+                  type: string
+                  format: uri
+                  example: https://cdn.example.com/avatars/user123.png
+      responses:
+        "200":
+          description: Avatar updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
 
@@ -812,6 +843,10 @@ components:
         email:
           type: string
           format: email
+        avatar_url:
+          type: string
+          format: uri
+          nullable: true
         created_at:
           type: string
           format: date-time
