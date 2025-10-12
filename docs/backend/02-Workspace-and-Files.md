@@ -256,7 +256,7 @@ When deleting a folder:
 4. Delete all folders (bottom-up)
 5. Delete the target folder
 
-### Building Hierarchy Tree
+### [TODO] Building Hierarchy Tree
 
 Algorithm for `GET /workspace/hierarchy`:
 
