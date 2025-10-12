@@ -2,7 +2,7 @@
 
 \*This documentation is not for the UI/UX design, it is for the wireframe/layout to get us an idea of what we are building
 
-\*PNG file exported from Figma is in the same folder
+
 
 ## Dependencies
 
@@ -32,7 +32,7 @@ The application follows a three-panel layout:
   - we can store files as md files or contents of the files in a sql db
   - images will be stored saperately and called with a url(in same folder as md files)
   - click on a file to open in editor
-  - ~~click save button(not in layout yet) to save changes~~ Saving changes will be in real time via websockets, frontend should listen to an `event` and update the UI with "changes saved" - **Edited by Adi**
+  - Saving changes will be in real time via websockets, frontend should listen to an `event` and update the UI with "changes saved" - 
 - **Bottom Bar**
   - Settings button (gear icon)
   - "Other Tabs" indicator/switcher
@@ -53,7 +53,7 @@ The application follows a three-panel layout:
 
 - Click tab to switch between open files
 - Middle-click or click × to close tab
-- ~~Ctrl+S to save~~
+
 - Standard text editing shortcuts
 
 ---
@@ -69,7 +69,7 @@ The application follows a three-panel layout:
 - **Chat History**
   - gives answeres in markdown but user sees rendered output in chat
   - entire editor file will be sent with user chat and previous chats for context(untill rag is implimented)
-  - ~~refresh page means clear chat history(for simplicity)(optional)~~ A complete Database will be implemented for saving the chat history, each chat history will be a session. There should be an option to perform "create" new chat, older chats will be stored in chat history dropdown like we have in ChatGPT interface - **Edited by Adi**
+  - A complete Database will be implemented for saving the chat history, each chat history will be a session. There should be an option to perform "create" new chat, older chats will be stored in chat history dropdown like we have in ChatGPT interface 
 - **Input Area** (Bottom)
   - messege ai and tap send button or hit enter to send. send button needs to convert to loading state while waiting for ai response
 
@@ -98,4 +98,4 @@ The application follows a three-panel layout:
 
 ## TODO
 
-- The highlight and "replace" feature for performing hot updates of AI Agent is yet to be discussed. Check [overview-draft.md](../../archietecture/overview-draft.md#ai-related-features)
+- The highlight and "replace" feature for performing hot updates of AI Agent is yet to be discussed. Check [overview-draft.md](../archietecture/overview-draft.md#ai-related-features)

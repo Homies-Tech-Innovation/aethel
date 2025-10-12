@@ -1,5 +1,7 @@
 # Design guidelines
 
+![image](./assets/refrence-images/ui.png)
+
 ## Description of Layout
 - The main editor pane is 50%(0.5) of the total width
 
@@ -29,4 +31,4 @@ Hightlight color is used when text is selected or an item is highlighted in a li
 Border Color is used for separating panels, modal borders or subtle line accents. 
 
 ## Typography 
-<!-- TODO: To be completed after deciding the font -->   
+- **font** - inter  
