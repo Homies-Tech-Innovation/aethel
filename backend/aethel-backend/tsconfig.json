@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		"paths": {
+			"@/*": ["./src/*"]
+		},
+		"allowJs": true,
+		"checkJs": false,
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"moduleDetection": "force",
+		"types": ["node"],
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"sourceMap": true,
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true,
+		"noUncheckedIndexedAccess": true
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"]
+}
