@@ -52,7 +52,7 @@ paths:
   /auth/login:
     post:
       summary: Log In A User
-      description: Authenticates a user and returns JWTs.
+      description: Authenticates a user and sets access and refresh tokens in secure, HttpOnly cookies.
       tags:
         - Auth
       requestBody:
@@ -73,42 +73,28 @@ paths:
                   example: password
       responses:
         "200":
-          description: Login successful
-          content:
-            application/json:
+          description: Login successful. Tokens are in cookies.
+          headers:
+            Set-Cookie:
               schema:
-                type: object
-                properties:
-                  access_token:
-                    type: string
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-                  refresh_token:
-                    type: string
-                    example: ijbiuB8yhU...
+                type: string
+                example: "accessToken=...; refreshToken=..."
         "401":
           $ref: "#/components/responses/Unauthorized"
   /auth/logout:
     post:
       summary: Log Out A User
-      description: Invalidates the user's refresh token.
+      description: Clears the authentication cookies.
       tags:
         - Auth
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [refresh_token]
-              properties:
-                refresh_token:
-                  type: string
-                  example: ijbiuB8yhU...
       responses:
         "200":
           description: Logout successful
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: "accessToken=; Max-Age=0; refreshToken=; Max-Age=0"
         "401":
           $ref: "#/components/responses/Unauthorized"
   /auth/verify-email:
@@ -185,31 +171,17 @@ paths:
   /auth/refresh:
     post:
       summary: Refresh Access Token
-      description: Issues a new access token using a refresh token.
+      description: Issues a new access token using the refresh token from the cookie, returning it in a new cookie.
       tags:
         - Auth
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [refresh_token]
-              properties:
-                refresh_token:
-                  type: string
-                  example: the-long-lived-jwt...
       responses:
         "200":
-          description: Token refreshed successfully
-          content:
-            application/json:
+          description: Token refreshed successfully.
+          headers:
+            Set-Cookie:
               schema:
-                type: object
-                properties:
-                  access_token:
-                    type: string
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                type: string
+                example: "accessToken=..."
         "401":
           $ref: "#/components/responses/Unauthorized"
 
@@ -223,7 +195,7 @@ paths:
       tags:
         - Users
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       responses:
         "200":
           description: Successful response
@@ -239,7 +211,7 @@ paths:
       tags:
         - Users
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -270,7 +242,7 @@ paths:
       tags:
         - Users
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       responses:
         "204":
           description: No Content - User successfully deleted
@@ -287,7 +259,7 @@ paths:
       tags:
         - Workspace
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       responses:
         "200":
           description: A nested tree of folders and documents.
@@ -310,7 +282,7 @@ paths:
       tags:
         - Folders
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -345,7 +317,7 @@ paths:
       tags:
         - Folders
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -370,7 +342,7 @@ paths:
       tags:
         - Folders
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -411,7 +383,7 @@ paths:
       tags:
         - Folders
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -437,7 +409,7 @@ paths:
       tags:
         - Documents
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -475,7 +447,7 @@ paths:
       tags:
         - Documents
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -500,7 +472,7 @@ paths:
       tags:
         - Documents
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -544,7 +516,7 @@ paths:
       tags:
         - Documents
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -570,7 +542,7 @@ paths:
       tags:
         - Images
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -604,7 +576,7 @@ paths:
       tags:
         - Images
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -629,7 +601,7 @@ paths:
       tags:
         - Images
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -655,7 +627,7 @@ paths:
       tags:
         - AI
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -688,7 +660,7 @@ paths:
       tags:
         - AI
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -711,7 +683,6 @@ paths:
           content:
             application/json:
               schema:
-                # USE THE NEW RESPONSE SCHEMA
                 $ref: "#/components/schemas/ChatInteractionResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
@@ -724,7 +695,7 @@ paths:
       tags:
         - AI
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       responses:
         "200":
           description: A list of chat session summaries.
@@ -743,7 +714,7 @@ paths:
       tags:
         - AI
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -768,7 +739,7 @@ paths:
       tags:
         - AI
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -790,7 +761,7 @@ paths:
       tags:
         - AI
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -815,10 +786,10 @@ paths:
 # ============================================
 components:
   securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: accessToken
 
   schemas:
     AIResponseMessage:
@@ -922,7 +893,6 @@ components:
           type: string
           format: date-time
 
-    # NEW SCHEMAS
     WorkspaceNode:
       type: object
       properties:

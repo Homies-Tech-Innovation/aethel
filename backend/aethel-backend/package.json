@@ -4,6 +4,8 @@
 	"description": "",
 	"main": "index.ts",
 	"scripts": {
+		"prebuild": "npm run generate:types",
+		"predev": "npm run generate:types",
 		"build": "tsc && tsc-alias",
 		"start": "node dist/server.js",
 		"dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts",

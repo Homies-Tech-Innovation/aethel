@@ -74,7 +74,7 @@ export interface paths {
         put?: never;
         /**
          * Log In A User
-         * @description Authenticates a user and returns JWTs.
+         * @description Authenticates a user and sets access and refresh tokens in secure, HttpOnly cookies.
          */
         post: {
             parameters: {
@@ -100,19 +100,13 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Login successful */
+                /** @description Login successful. Tokens are in cookies. */
                 200: {
                     headers: {
+                        "Set-Cookie"?: string;
                         [name: string]: unknown;
                     };
-                    content: {
-                        "application/json": {
-                            /** @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... */
-                            access_token?: string;
-                            /** @example ijbiuB8yhU... */
-                            refresh_token?: string;
-                        };
-                    };
+                    content?: never;
                 };
                 401: components["responses"]["Unauthorized"];
             };
@@ -134,7 +128,7 @@ export interface paths {
         put?: never;
         /**
          * Log Out A User
-         * @description Invalidates the user's refresh token.
+         * @description Clears the authentication cookies.
          */
         post: {
             parameters: {
@@ -143,18 +137,12 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        /** @example ijbiuB8yhU... */
-                        refresh_token: string;
-                    };
-                };
-            };
+            requestBody?: never;
             responses: {
                 /** @description Logout successful */
                 200: {
                     headers: {
+                        "Set-Cookie"?: string;
                         [name: string]: unknown;
                     };
                     content?: never;
@@ -322,7 +310,7 @@ export interface paths {
         put?: never;
         /**
          * Refresh Access Token
-         * @description Issues a new access token using a refresh token.
+         * @description Issues a new access token using the refresh token from the cookie, returning it in a new cookie.
          */
         post: {
             parameters: {
@@ -331,26 +319,15 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        /** @example the-long-lived-jwt... */
-                        refresh_token: string;
-                    };
-                };
-            };
+            requestBody?: never;
             responses: {
-                /** @description Token refreshed successfully */
+                /** @description Token refreshed successfully. */
                 200: {
                     headers: {
+                        "Set-Cookie"?: string;
                         [name: string]: unknown;
                     };
-                    content: {
-                        "application/json": {
-                            /** @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... */
-                            access_token?: string;
-                        };
-                    };
+                    content?: never;
                 };
                 401: components["responses"]["Unauthorized"];
             };
