@@ -648,10 +648,43 @@ paths:
   # ============================================
   # AI ENDPOINTS
   # ============================================
+  /ai/message:
+    post:
+      summary: Send a message to the AI
+      description: Sends a user's message to the AI for processing and receives a suggestion. Chat history is not supported.
+      tags:
+        - AI
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+                  example: "Can you refactor this document to be more concise?"
+      responses:
+        "200":
+          description: AI response received successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIResponseMessage"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /ai/chat:
     post:
       summary: Send a message to the AI
-      description: Sends a user's message to the AI for processing and receives a response. The response may contain a suggestion ID for document changes.
+      description: |-
+        Sends a user's message to the AI for processing.
+        - To start a new chat, omit `chat_session_id`. The server will create a new session and return its ID.
+        - To continue an existing chat, provide the `chat_session_id`.
       tags:
         - AI
       security:
@@ -674,11 +707,12 @@ paths:
                   example: "Can you refactor this document to be more concise?"
       responses:
         "200":
-          description: AI response received successfully.
+          description: AI response received successfully. The session ID is always returned.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ChatMessage"
+                # USE THE NEW RESPONSE SCHEMA
+                $ref: "#/components/schemas/ChatInteractionResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -728,6 +762,27 @@ paths:
           $ref: "#/components/responses/NotFound"
         "401":
           $ref: "#/components/responses/Unauthorized"
+    delete:
+      summary: Delete Chat
+      description: Deletes a chat session history.
+      tags:
+        - AI
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Chat deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /ai/suggestions/{id}:
     get:
       summary: Get an AI Suggestion
@@ -766,6 +821,13 @@ components:
       bearerFormat: JWT
 
   schemas:
+    AIResponseMessage:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          example: "Aethel is a powerful markdown editor..."
     User:
       type: object
       properties:
@@ -932,7 +994,16 @@ components:
           content:
             type: string
             description: The new, suggested content for the document.
-
+    ChatInteractionResponse:
+      type: object
+      properties:
+        chat_session_id:
+          type: string
+          format: uuid
+          description: The unique identifier for the chat session. This is returned on every interaction.
+        ai_message:
+          $ref: "#/components/schemas/ChatMessage"
+          description: The AI's response message.
     Error:
       type: object
       properties:
