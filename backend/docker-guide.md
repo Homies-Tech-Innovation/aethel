@@ -36,7 +36,6 @@ This is the only workflow supported for local development.
 
 1.  **For Docker (`.env.docker` at the root):**
     This file is **only** read by Docker Compose to configure the database container itself.
-
     - **Example (`.env.docker.example`):**
       ```bash
       POSTGRES_USER=myuser
@@ -46,7 +45,6 @@ This is the only workflow supported for local development.
 
 2.  **For the Local Backend (`aethel-backend/.env`):**
     This is the file your Node.js application reads when you run `npm run dev`. It contains your application secrets and the full connection string to the database.
-
     - **Example (`aethel-backend/.env.example`):**
 
       ```bash

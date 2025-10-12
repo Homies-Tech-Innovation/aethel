@@ -18,9 +18,9 @@
 - **Cookie Options:**
   ```ts
   const cookieOptions = {
-  	httpOnly: true,
-  	secure: true,
-  	sameSite: "strict",
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
   };
   ```
 - **Required Environment Variables:**
@@ -44,13 +44,16 @@
 ```ts
 import type { RegisterRequest, RegisterResponse } from "@/types";
 
-async function registerUser(req: Request<{}, {}, RegisterRequest>, res: Response<RegisterResponse>) {
-	// Validate input
-	// Check if user exists
-	// Create user (password hashed via middleware)
-	// Send verification email
-	// Return user (RegisterResponse)
-	// Log registration event
+async function registerUser(
+  req: Request<{}, {}, RegisterRequest>,
+  res: Response<RegisterResponse>,
+) {
+  // Validate input
+  // Check if user exists
+  // Create user (password hashed via middleware)
+  // Send verification email
+  // Return user (RegisterResponse)
+  // Log registration event
 }
 ```
 
@@ -65,13 +68,16 @@ async function registerUser(req: Request<{}, {}, RegisterRequest>, res: Response
 import type { LoginRequest } from "@/types";
 import type { Request, Response } from "express";
 
-async function loginUser(req: Request<any, any, LoginRequest>, res: Response): Promise<void> {
-	// Validate input (OpenAPI middleware)
-	// Find user by email
-	// Compare password with hashed password
-	// Generate access & refresh tokens
-	// Set cookies for tokens
-	// Send 200 OK (no body)
+async function loginUser(
+  req: Request<any, any, LoginRequest>,
+  res: Response,
+): Promise<void> {
+  // Validate input (OpenAPI middleware)
+  // Find user by email
+  // Compare password with hashed password
+  // Generate access & refresh tokens
+  // Set cookies for tokens
+  // Send 200 OK (no body)
 }
 ```
 
@@ -84,13 +90,13 @@ async function loginUser(req: Request<any, any, LoginRequest>, res: Response): P
 import type { Request, Response } from "express";
 
 async function refreshToken(req: Request, res: Response): Promise<void> {
-	// Read refresh token from cookie or header
-	// Verify JWT
-	// Fetch user from DB
-	// Check refresh token matches DB
-	// Generate new tokens
-	// Set cookies for tokens
-	// Send 200 OK (no body)
+  // Read refresh token from cookie or header
+  // Verify JWT
+  // Fetch user from DB
+  // Check refresh token matches DB
+  // Generate new tokens
+  // Set cookies for tokens
+  // Send 200 OK (no body)
 }
 ```
 
@@ -103,10 +109,10 @@ async function refreshToken(req: Request, res: Response): Promise<void> {
 import type { Request, Response } from "express";
 
 async function logoutUser(req: Request, res: Response): Promise<void> {
-	// Read refresh token from cookie or header
-	// Delete refresh token from DB
-	// Clear cookies for tokens
-	// Send 200 OK (no body)
+  // Read refresh token from cookie or header
+  // Delete refresh token from DB
+  // Clear cookies for tokens
+  // Send 200 OK (no body)
 }
 ```
 
@@ -118,12 +124,15 @@ async function logoutUser(req: Request, res: Response): Promise<void> {
 import type { ForgotPasswordRequest } from "@/types";
 import type { Request, Response } from "express";
 
-async function forgotPassword(req: Request<any, any, ForgotPasswordRequest>, res: Response): Promise<void> {
-	// Validate input (OpenAPI middleware)
-	// Find user by email
-	// Generate & store reset token
-	// Send password reset email
-	// Send 200 OK (no body)
+async function forgotPassword(
+  req: Request<any, any, ForgotPasswordRequest>,
+  res: Response,
+): Promise<void> {
+  // Validate input (OpenAPI middleware)
+  // Find user by email
+  // Generate & store reset token
+  // Send password reset email
+  // Send 200 OK (no body)
 }
 ```
 
@@ -135,13 +144,16 @@ async function forgotPassword(req: Request<any, any, ForgotPasswordRequest>, res
 import type { ResetPasswordRequest } from "@/types";
 import type { Request, Response } from "express";
 
-async function resetPassword(req: Request<any, any, ResetPasswordRequest>, res: Response): Promise<void> {
-	// Validate input (OpenAPI middleware)
-	// Find user by reset token
-	// Check if token expired
-	// Update password (hashed via middleware)
-	// Delete reset token
-	// Send 200 OK (no body)
+async function resetPassword(
+  req: Request<any, any, ResetPasswordRequest>,
+  res: Response,
+): Promise<void> {
+  // Validate input (OpenAPI middleware)
+  // Find user by reset token
+  // Check if token expired
+  // Update password (hashed via middleware)
+  // Delete reset token
+  // Send 200 OK (no body)
 }
 ```
 
@@ -155,11 +167,14 @@ async function resetPassword(req: Request<any, any, ResetPasswordRequest>, res: 
 import type { VerifyEmailRequest } from "@/types";
 import type { Request, Response } from "express";
 
-async function verifyEmail(req: Request<any, any, VerifyEmailRequest>, res: Response): Promise<void> {
-	// Validate input (OpenAPI middleware)
-	// Find user by verification token
-	// Mark email as verified
-	// Send 200 OK (no body)
+async function verifyEmail(
+  req: Request<any, any, VerifyEmailRequest>,
+  res: Response,
+): Promise<void> {
+  // Validate input (OpenAPI middleware)
+  // Find user by verification token
+  // Mark email as verified
+  // Send 200 OK (no body)
 }
 ```
 
@@ -174,9 +189,9 @@ import type { GetCurrentUserResponse } from "@/types";
 import type { Request, Response } from "express";
 
 async function getCurrentUser(req: Request, res: Response): Promise<void> {
-	// Get userId from req.user (auth middleware)
-	// Fetch user by ID
-	// Send user as JSON (GetCurrentUserResponse)
+  // Get userId from req.user (auth middleware)
+  // Fetch user by ID
+  // Send user as JSON (GetCurrentUserResponse)
 }
 ```
 
@@ -186,10 +201,13 @@ async function getCurrentUser(req: Request, res: Response): Promise<void> {
 import type { UpdateProfileRequest, UpdateProfileResponse } from "@/types";
 import type { Request, Response } from "express";
 
-async function updateProfile(req: Request<any, any, UpdateProfileRequest>, res: Response): Promise<void> {
-	// Get userId from req.user
-	// Update display_name / username
-	// Return updated user as JSON (UpdateProfileResponse)
+async function updateProfile(
+  req: Request<any, any, UpdateProfileRequest>,
+  res: Response,
+): Promise<void> {
+  // Get userId from req.user
+  // Update display_name / username
+  // Return updated user as JSON (UpdateProfileResponse)
 }
 ```
 
@@ -200,10 +218,10 @@ import type { UpdateAvatarRequest, UpdateAvatarResponse } from "@/types";
 import type { Request, Response } from "express";
 
 async function updateAvatar(req: Request, res: Response): Promise {
-	// Get userId from req.user
-	// Validate avatar_url format (should be valid URI)
-	// Update user's avatar_url in database
-	// Return updated user as JSON (UpdateAvatarResponse)
+  // Get userId from req.user
+  // Validate avatar_url format (should be valid URI)
+  // Update user's avatar_url in database
+  // Return updated user as JSON (UpdateAvatarResponse)
 }
 ```
 
@@ -216,10 +234,10 @@ async function updateAvatar(req: Request, res: Response): Promise {
 import type { Request, Response } from "express";
 
 async function deleteUser(req: Request, res: Response): Promise<void> {
-	// Get userId from req.user
-	// Delete user and associated data
-	// Clear authentication cookies
-	// Send 204 No Content
+  // Get userId from req.user
+  // Delete user and associated data
+  // Clear authentication cookies
+  // Send 204 No Content
 }
 ```
 

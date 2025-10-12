@@ -59,7 +59,11 @@ A standardized error handling approach is required for a predictable API.
 - **Error Schema:** All errors returned to the client must conform to the `Error` schema in `types`.
 
 ```ts
-import type { BadRequestError, UnauthorizedError, NotFoundError } from "@/types";
+import type {
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError,
+} from "@/types";
 ```
 
 e.g.

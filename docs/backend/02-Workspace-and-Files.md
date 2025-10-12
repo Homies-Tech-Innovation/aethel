@@ -28,14 +28,17 @@
 import type { GetWorkspaceHierarchyResponse } from "@/types";
 import type { Request, Response } from "express";
 
-async function getWorkspaceHierarchy(req: Request, res: Response): Promise<void> {
-	// Get userId from req.user (auth middleware)
-	// Fetch all folders for user
-	// Fetch all documents for user
-	// Build nested tree structure (WorkspaceNode[])
-	// Start with root-level items (parent_id/folder_id = null)
-	// Recursively nest children under their parents
-	// Send tree as JSON (GetWorkspaceHierarchyResponse)
+async function getWorkspaceHierarchy(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  // Get userId from req.user (auth middleware)
+  // Fetch all folders for user
+  // Fetch all documents for user
+  // Build nested tree structure (WorkspaceNode[])
+  // Start with root-level items (parent_id/folder_id = null)
+  // Recursively nest children under their parents
+  // Send tree as JSON (GetWorkspaceHierarchyResponse)
 }
 ```
 
@@ -54,13 +57,16 @@ async function getWorkspaceHierarchy(req: Request, res: Response): Promise<void>
 import type { CreateFolderRequest, CreateFolderResponse } from "@/types";
 import type { Request, Response } from "express";
 
-async function createFolder(req: Request<any, any, CreateFolderRequest>, res: Response): Promise<void> {
-	// Get userId from req.user
-	// Validate input (OpenAPI middleware)
-	// If parent_id provided, verify parent exists and belongs to user
-	// Create folder with name, user_id, parent_id
-	// Return created folder (CreateFolderResponse)
-	// Send 201 Created
+async function createFolder(
+  req: Request<any, any, CreateFolderRequest>,
+  res: Response,
+): Promise<void> {
+  // Get userId from req.user
+  // Validate input (OpenAPI middleware)
+  // If parent_id provided, verify parent exists and belongs to user
+  // Create folder with name, user_id, parent_id
+  // Return created folder (CreateFolderResponse)
+  // Send 201 Created
 }
 ```
 
@@ -76,12 +82,12 @@ import type { GetFolderResponse } from "@/types";
 import type { Request, Response } from "express";
 
 async function getFolderById(req: Request, res: Response): Promise<void> {
-	// Get userId from req.user
-	// Extract folder id from req.params.id
-	// Fetch folder by id
-	// Verify folder belongs to user
-	// Return folder details (GetFolderResponse)
-	// Send 404 if not found or doesn't belong to user
+  // Get userId from req.user
+  // Extract folder id from req.params.id
+  // Fetch folder by id
+  // Verify folder belongs to user
+  // Return folder details (GetFolderResponse)
+  // Send 404 if not found or doesn't belong to user
 }
 ```
 
@@ -94,15 +100,18 @@ async function getFolderById(req: Request, res: Response): Promise<void> {
 import type { UpdateFolderRequest, UpdateFolderResponse } from "@/types";
 import type { Request, Response } from "express";
 
-async function updateFolder(req: Request<any, any, UpdateFolderRequest>, res: Response): Promise<void> {
-	// Get userId from req.user
-	// Extract folder id from req.params.id
-	// Fetch folder by id
-	// Verify folder belongs to user
-	// If parent_id provided, verify parent exists and belongs to user
-	// Prevent circular references (folder cannot be its own ancestor)
-	// Update name and/or parent_id
-	// Return updated folder (UpdateFolderResponse)
+async function updateFolder(
+  req: Request<any, any, UpdateFolderRequest>,
+  res: Response,
+): Promise<void> {
+  // Get userId from req.user
+  // Extract folder id from req.params.id
+  // Fetch folder by id
+  // Verify folder belongs to user
+  // If parent_id provided, verify parent exists and belongs to user
+  // Prevent circular references (folder cannot be its own ancestor)
+  // Update name and/or parent_id
+  // Return updated folder (UpdateFolderResponse)
 }
 ```
 
@@ -118,13 +127,13 @@ async function updateFolder(req: Request<any, any, UpdateFolderRequest>, res: Re
 import type { Request, Response } from "express";
 
 async function deleteFolder(req: Request, res: Response): Promise<void> {
-	// Get userId from req.user
-	// Extract folder id from req.params.id
-	// Fetch folder by id
-	// Verify folder belongs to user
-	// Delete all nested folders and documents (cascade delete)
-	// Delete the folder itself
-	// Send 204 No Content
+  // Get userId from req.user
+  // Extract folder id from req.params.id
+  // Fetch folder by id
+  // Verify folder belongs to user
+  // Delete all nested folders and documents (cascade delete)
+  // Delete the folder itself
+  // Send 204 No Content
 }
 ```
 
@@ -139,13 +148,16 @@ async function deleteFolder(req: Request, res: Response): Promise<void> {
 import type { CreateDocumentRequest, CreateDocumentResponse } from "@/types";
 import type { Request, Response } from "express";
 
-async function createDocument(req: Request<any, any, CreateDocumentRequest>, res: Response): Promise<void> {
-	// Get userId from req.user
-	// Validate input (OpenAPI middleware)
-	// If folder_id provided, verify folder exists and belongs to user
-	// Create document with file_name, content, user_id, folder_id
-	// Return created document (CreateDocumentResponse)
-	// Send 201 Created
+async function createDocument(
+  req: Request<any, any, CreateDocumentRequest>,
+  res: Response,
+): Promise<void> {
+  // Get userId from req.user
+  // Validate input (OpenAPI middleware)
+  // If folder_id provided, verify folder exists and belongs to user
+  // Create document with file_name, content, user_id, folder_id
+  // Return created document (CreateDocumentResponse)
+  // Send 201 Created
 }
 ```
 
@@ -162,12 +174,12 @@ import type { GetDocumentResponse } from "@/types";
 import type { Request, Response } from "express";
 
 async function getDocumentById(req: Request, res: Response): Promise<void> {
-	// Get userId from req.user
-	// Extract document id from req.params.id
-	// Fetch document by id
-	// Verify document belongs to user
-	// Return document details (GetDocumentResponse)
-	// Send 404 if not found or doesn't belong to user
+  // Get userId from req.user
+  // Extract document id from req.params.id
+  // Fetch document by id
+  // Verify document belongs to user
+  // Return document details (GetDocumentResponse)
+  // Send 404 if not found or doesn't belong to user
 }
 ```
 
@@ -180,14 +192,17 @@ async function getDocumentById(req: Request, res: Response): Promise<void> {
 import type { UpdateDocumentRequest, UpdateDocumentResponse } from "@/types";
 import type { Request, Response } from "express";
 
-async function updateDocument(req: Request<any, any, UpdateDocumentRequest>, res: Response): Promise<void> {
-	// Get userId from req.user
-	// Extract document id from req.params.id
-	// Fetch document by id
-	// Verify document belongs to user
-	// If folder_id provided, verify folder exists and belongs to user
-	// Update file_name, content, and/or folder_id
-	// Return updated document (UpdateDocumentResponse)
+async function updateDocument(
+  req: Request<any, any, UpdateDocumentRequest>,
+  res: Response,
+): Promise<void> {
+  // Get userId from req.user
+  // Extract document id from req.params.id
+  // Fetch document by id
+  // Verify document belongs to user
+  // If folder_id provided, verify folder exists and belongs to user
+  // Update file_name, content, and/or folder_id
+  // Return updated document (UpdateDocumentResponse)
 }
 ```
 
@@ -203,13 +218,13 @@ async function updateDocument(req: Request<any, any, UpdateDocumentRequest>, res
 import type { Request, Response } from "express";
 
 async function deleteDocument(req: Request, res: Response): Promise<void> {
-	// Get userId from req.user
-	// Extract document id from req.params.id
-	// Fetch document by id
-	// Verify document belongs to user
-	// Delete associated images (optional cleanup)
-	// Delete the document
-	// Send 204 No Content
+  // Get userId from req.user
+  // Extract document id from req.params.id
+  // Fetch document by id
+  // Verify document belongs to user
+  // Delete associated images (optional cleanup)
+  // Delete the document
+  // Send 204 No Content
 }
 ```
 
@@ -224,10 +239,10 @@ Always verify ownership before any operation:
 
 ```ts
 if (folder.user_id !== req.user.id) {
-	return res.status(404).json({
-		error: "Not Found",
-		message: "Folder not found",
-	});
+  return res.status(404).json({
+    error: "Not Found",
+    message: "Folder not found",
+  });
 }
 ```
 
@@ -239,10 +254,13 @@ When updating folder's `parent_id`:
 
 ```ts
 // Check if new parent is a descendant of current folder
-async function isDescendant(folderId: string, ancestorId: string): Promise<boolean> {
-	// Traverse up the tree from folderId
-	// If we reach ancestorId, it's a descendant
-	// Return true to prevent circular reference
+async function isDescendant(
+  folderId: string,
+  ancestorId: string,
+): Promise<boolean> {
+  // Traverse up the tree from folderId
+  // If we reach ancestorId, it's a descendant
+  // Return true to prevent circular reference
 }
 ```
 
