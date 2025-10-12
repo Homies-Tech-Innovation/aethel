@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: aethel-postgres-db
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    env_file:
+      - .env.docker
