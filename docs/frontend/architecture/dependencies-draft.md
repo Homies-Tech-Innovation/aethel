@@ -30,6 +30,7 @@ options:
 
 options
 - **Blocknotes** -ref => [Docs](https://www.blocknotejs.org/docs)
+-                        [youtube] (https://youtu.be/FspnnTtVJdk?si=LhKOjsgZ-JwTCMe_)
 
 
 ---
