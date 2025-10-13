@@ -5,7 +5,7 @@
 This is the only workflow supported for local development.
 
 1.  **Configure the Database:**
-    In the project root (`backend/`), copy the environment example file to create your Docker environment file.
+    In the project root (`aethel/`), copy the environment example file to create your Docker environment file.
 
     ```sh
     cp .env.docker.example .env.docker
@@ -17,7 +17,7 @@ This is the only workflow supported for local development.
     From the project's root directory (`backend/`), run:
 
     ```sh
-    docker-compose up -d
+    docker-compose up -d db
     ```
 
     This starts the PostgreSQL container and exposes its port `5432` to your `localhost`.
@@ -25,7 +25,7 @@ This is the only workflow supported for local development.
 3.  **Run the Backend Locally:**
     Navigate to the backend service folder, create your local `.env` file, and start the server.
     ```sh
-    cd aethel-backend
+    cd backend/aethel-backend
     cp .env.example .env # And fill it with your app secrets (JWT, etc.)
     npm install
     npm run dev
