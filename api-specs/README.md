@@ -20,22 +20,20 @@ This project uses Docker to run a local Swagger UI, providing an interactive way
 1.  **Navigate to the directory:**
 
     ```sh
-    cd api-specs
+    cd aethal
     ```
 
 2.  **Run with Docker Compose:**
-    This command will build the required images and start the Swagger services in the background.
+    This command will start only the Swagger UI and Swagger Editor services:
 
     ```sh
-    docker compose up --build -d
+    docker compose up -d swagger-ui swagger-editor
     ```
 
 3.  **View the API Contract:**
     You can now access the interactive Swagger UI in your browser at:
-    **[http://localhost:8080/swagger](http://localhost:8080/swagger)**
-
-    > **Note:** In the Swagger UI, ensure the specification URL in the top bar is set to `./openapi.yaml` to load the contract.
-
+    **[http://localhost:8080](http://localhost:8080)**
+    
 ## Project TODOs
 
 - [ ] **Review Endpoints:** Re-check every endpoint, its parameters, and expected responses.
