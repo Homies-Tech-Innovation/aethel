@@ -1,0 +1,14 @@
+{
+  "name": "aethel",
+  "version": "1.0.0",
+  "description": "Aethel project - TypeScript types and Client SDK generation",
+  "scripts": {
+    "generate:types": "tsc --emitDeclarationOnly",
+    "generate:sdk": "node scripts/generateClientSDK.js"
+  },
+  "author": "Vaishnavi Jha",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  }
+}
