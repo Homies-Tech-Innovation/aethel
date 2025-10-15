@@ -10,7 +10,7 @@
 
 ##### file uploads
 
-- sharp - image processing to redude image size if it goes beyond the limit
+- ~~sharp - image processing to redude image size if it goes beyond the limit~~ [not needed anymore]
 
 ---
 
@@ -19,7 +19,7 @@
 options:
 
 - **use json based ui rendering** - ref => [Youtube](https://youtu.be/MosLKXa0VOM?si=JHOwsoyyifXuk0r-)
--
+
 
 ##### Editor
 
