@@ -74,7 +74,7 @@ initialContent = document.content
 
 - every 4 second all the markdown with newly added files etc will be sent to the backend
 
-- from the data sent to backend there will be a copy stored locally for undo functionality [This can introduce more complexity like versioning, better remove it]   OR [stoered copy can help faster with faster undo and no management. undo history clears itself ans it is stored in frontend only]
+
 
 
 ---
