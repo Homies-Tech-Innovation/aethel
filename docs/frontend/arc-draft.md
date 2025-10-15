@@ -1,56 +1,89 @@
-\*_the json structure is only for understanding. please see json file_
+
 
 ## file browser
 
 - uses **Json** to reseve folder stucture data from the backend
 - renders based on children && properties
-- each element will have a type
+
 
 ```
 
 {
   "folders": [
     {
-      "type": "folder | markdown | img",
-      "visible": "true | false",
+      "id" : "string"
+      "name": "string",
+      "type": "folder | document",      
       "children": null
     },
     {
-      "type": "folder | markdown | img",
-      "visible": "true | false",
-      "children": [
-        {
-          "type": "folder | markdown | img",
-          "visible": "true | false",
-          "children": null
-        }
-      ]
-    }
+      "id" : "string"
+      "name": "string",
+      "type": "folder | document",      
+      "children": {
+                    "id" : "string"
+                    "name": "string",
+                    "type": "folder | document",                  
+                    "children": null
+                  }
+      
+    }     
   ]
 }
 
 ```
 
 - currently supported files are various image formats eg jpg , png etc
-- all files will be converted to a specific resolution range.
-- all files will be converted to jpg with 80% quality (best file size to quality ratio)
-- file uplaod will happen directly through editor and files will be stored in same folder as the md file.
+
 - user will only see the file in folderr structure and will not see other files (makes ui clean and user does not need to see them any way)
+
+### functions
+
+#### handleClick 
+
+- opens folders or loads files
+
+```tsx
+const handleClick = () => {
+
+if (type == folder){
+  //set show children true or flase
+}
+else {
+  //load file to edditor
+}
+
+}
+```
+
+
 
 ## Editor
 
 - the editor uses blocknote to setup a markdown editor
-- pages will be loaded in the editor using react router and will be auto saved every 4 seconds.
+- pages will be loaded in the editor using react router 
+
+- frontend requests a file when user clicks on it and gets this response
+
+```ts
+initialContent = document.content
+```
+
+- pages will be auto saved every 4 seconds.
+
 
 - every 4 second all the markdown with newly added files etc will be sent to the backend
 
-- from the data sent to backend there will be a copy stored locally for undo functionality [This can introduce more complexity like versioning, better remove it]
+- from the data sent to backend there will be a copy stored locally for undo functionality [This can introduce more complexity like versioning, better remove it]   OR [stoered copy can help faster with faster undo and no management. undo history clears itself ans it is stored in frontend only]
+
 
 ---
 
 ## AI chat
 
 - chat data will be recieved using json and will be in markdown form.
+
+
 
 - llm will be pre prompted to give results in markdown
 
@@ -61,36 +94,13 @@
 \*_recieved_
 
 ```
-[
-    {
-        type : ai-response
-        description : (markdown data)
-        changes : (markdown data)
-    }
-]
-
-
+code here
 ```
 
 \*_sent_
 
 ```
-[
-    {
-        type : user-message
-        description/chat : (markdown data)
-
-        context : [
-            {
-                file :(markdown file) **currently opened*,
-                previous-chats : (chat-history)
-            }
-        ]
-
-    }
-]
-
-
+code here
 ```
 
 ---

@@ -2,6 +2,8 @@
 
 \*This documentation is not for the UI/UX design, it is for the wireframe/layout to get us an idea of what we are building
 
+\*older documentation for frontend wireframes
+
 ## Dependencies
 
 - React
