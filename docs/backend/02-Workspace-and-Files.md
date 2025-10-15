@@ -36,6 +36,7 @@ async function getWorkspaceHierarchy(req: Request, res: Response): Promise<void>
 	// Start with root-level items (parent_id/folder_id = null)
 	// Recursively nest children under their parents
 	// Send tree as JSON (GetWorkspaceHierarchyResponse)
+	// See 04-Database-Design.md for full algorithm implementation
 }
 ```
 
@@ -185,9 +186,13 @@ async function updateDocument(req: Request<any, any, UpdateDocumentRequest>, res
 	// Extract document id from req.params.id
 	// Fetch document by id
 	// Verify document belongs to user
+	// Store old content: oldContent = document.content
 	// If folder_id provided, verify folder exists and belongs to user
 	// Update file_name, content, and/or folder_id
+	// Save document to database
 	// Return updated document (UpdateDocumentResponse)
+	// AFTER response sent: Fire-and-forget call to markImagesForDeletion(documentId, oldContent, newContent)
+	// See 04-Database-Design.md - Image Cleanup System for implementation details
 }
 ```
 
@@ -196,6 +201,7 @@ async function updateDocument(req: Request<any, any, UpdateDocumentRequest>, res
   - `content`: string (optional, markdown text)
   - `folder_id`: string (UUID, nullable, optional)
 - **Response:** `UpdateDocumentResponse` (200 OK)
+- **Image Cleanup:** Asynchronously detects and marks deleted images after response
 
 #### `DELETE /documents/{id}`
 
@@ -207,14 +213,15 @@ async function deleteDocument(req: Request, res: Response): Promise<void> {
 	// Extract document id from req.params.id
 	// Fetch document by id
 	// Verify document belongs to user
-	// Delete associated images (optional cleanup)
 	// Delete the document
 	// Send 204 No Content
+	// AFTER response sent: Fire-and-forget call to markAllDocumentImagesForDeletion(documentId)
+	// See 04-Database-Design.md - Image Cleanup System for implementation details
 }
 ```
 
 - **Response:** 204 No Content
-- **Cleanup:** Consider deleting associated images if needed
+- **Image Cleanup:** Asynchronously marks all associated images for deletion after response
 
 ## Implementation Notes
 
@@ -256,14 +263,6 @@ When deleting a folder:
 4. Delete all folders (bottom-up)
 5. Delete the target folder
 
-### [TODO] Building Hierarchy Tree
+### Building Hierarchy Tree
 
-Algorithm for `GET /workspace/hierarchy`:
-
-```ts
-// 1. Fetch all folders and documents for user
-// 2. Create maps: folders by id, documents by folder_id
-// 3. Build tree starting with root items (parent_id/folder_id = null)
-// 4. For each folder, recursively attach children
-// 5. Return root-level nodes as array
-```
+See **04-Database-Design.md** for the complete algorithm implementation using MongoDB aggregation pipeline and JavaScript tree building.
