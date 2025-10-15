@@ -8,8 +8,8 @@ The following tools are required for the project. Any changes must be formally a
 
 - **Language:** Node.js with TypeScript
 - **Framework:** Express.js
-- **Database:** PostgreSQL
-- **ORM:** Prisma (for database access, schema management, and migrations)
+- **Database:** MongoDB
+- **ORM:** Mongoose
 - **API Validation:** `express-openapi-validator` (enforces OpenAPI contract at middleware level)
 - **Containerization:** Docker
 
@@ -40,19 +40,13 @@ backend/
 
 ## 3. Development Environment and Docker
 
-Docker Compose is used **only** to run the PostgreSQL database. The backend service must be run locally for development to enable debugging and hot-reloading.
+Docker Compose is used **only** to run the MongoDB database. The backend service must be run locally for development to enable debugging and hot-reloading.
 
 See the [Docker Guide](../../backend/docker-guide.md) for details.
 
 > **Note:** This setup is intentionally restrictive for simplicity. If running the backend in Docker becomes necessary (e.g., for CI or testing), this guide will be updated.
 
-## 4. Database Schema Management
-
-- **Source of Truth:** `aethel-backend/prisma/schema.prisma`
-- **Migrations:** Use Prisma's migration tool for all schema changes.
-  - **Command:** `npx prisma migrate dev` (generates and applies migrations during development)
-
-## 5. Error Handling
+## 4. Error Handling
 
 A standardized error handling approach is required for a predictable API.
 
@@ -71,7 +65,7 @@ throw new ApiError<BadRequestError>("Email is already in use");
 - Implement a global `ApiError` class to raise errors, which are handled by a global error middleware.
 - The global error handler formats all errors into the standard response and sends them to the client.
 
-## 6. Logging
+## 5. Logging
 
 - **Library:** Pino.js for structured, high-performance logging.
 - **Log Levels:** Controlled by the `LOG_LEVEL` environment variable.
