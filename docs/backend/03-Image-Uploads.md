@@ -114,47 +114,53 @@ export { validateMimeType };
 
 #### `POST /images`
 
-```ts
+````ts
 import type { UploadImageRequest, UploadImageResponse } from "@/types";
 import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/ApiResponse";
+import { BadRequestError, ApiError } from "@/utils/errors";
 
 async function createImage(
 	req: Request<any, any, UploadImageRequest>,
-	res: Response<UploadImageResponse>
+	res: Response<ApiResponse<UploadImageResponse>>
 ): Promise<void> {
 	// Get userId from req.user (auth middleware)
 	// Validate input (Multer middleware)
+	if (!req.file) throw new BadRequestError("No file uploaded.");
 	// Validate MIME type against ALLOWED_IMAGE_MIMETYPES
+	if (!isValidMimeType) throw new ApiError(415, "Unsupported media type.");
 	// Upload image to Cloudinary
 	// Save metadata to database
-	// Return created image record (UploadImageResponse)
-	// Send 201 Created
-}
-```
+	// Return created image record using ApiResponse<UploadImageResponse>
+	res.status(201).json(new ApiResponse<UploadImageResponse>(201, newImage, "Image uploaded successfully"));
+}```
 
 - **Request:** `UploadImageRequest`
   - `file`: File (required, `multipart/form-data` field)
   - `documentId`: UUID (optional, associates image with a document)
   - `folderId`: UUID (optional, associates image with a folder)
-- **Response:** `UploadImageResponse` (201 Created)
-- **Errors:** 400 (missing file), 401 (unauthorized), 415 (unsupported media type), 500 (server error)
+- **Response:** `ApiResponse<UploadImageResponse>` (201 Created)
+- **Errors:** Throw `BadRequestError` for missing file, `UnauthorizedError` for auth failures, `ApiError(415, ...)` for unsupported media types.
 
 #### `GET /images/{id}`
 
 ```ts
 import type { GetImageResponse } from "@/types";
 import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/ApiResponse";
+import { NotFoundError } from "@/utils/errors";
 
-async function getImage(req: Request, res: Response<GetImageResponse>): Promise<void> {
+async function getImage(req: Request, res: Response<ApiResponse<GetImageResponse>>): Promise<void> {
 	// Extract image ID from req.params.id
 	// Fetch image metadata from database
-	// Return image metadata (GetImageResponse)
-	// Send 404 if not found
+	if (!image) throw new NotFoundError("Image not found");
+	// Return image metadata using ApiResponse<GetImageResponse>
+	res.status(200).json(new ApiResponse<GetImageResponse>(200, image, "Image retrieved successfully"));
 }
-```
+````
 
-- **Response:** `GetImageResponse` (200 OK)
-- **Errors:** 404 (not found)
+- **Response:** `ApiResponse<GetImageResponse>` (200 OK)
+- **Errors:** Throw `NotFoundError` if not found
 
 ### Cascading Deletes
 
