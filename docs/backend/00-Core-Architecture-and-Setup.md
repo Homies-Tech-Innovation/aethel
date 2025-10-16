@@ -79,48 +79,55 @@ export { ApiResponse };
 ```ts
 // Send a success response with a typed data payload
 return res.status(200).json(new ApiResponse<GetCurrentUserResponse>(200, user, "User retrieved successfully"));
-
-// Send a success response for an action that doesn't return data
-return res.status(200).json(new ApiResponse(200, {}, "Logout successful"));
 ```
 
-### The `ApiError` Class
+### Error Classes
 
-For handling our own operational errors (e.g., "user not found," "email already in use"), we'll use a custom `ApiError` class. This lets us throw errors from anywhere in our services or controllers with a specific HTTP status code. Our global handler will then catch these and format them correctly for the client.
+Controllers and services should throw subclasses of `ApiError` (or `ApiError` itself) for expected failures; the error handler will use its properties for logging and client responses while preserving the original stack for debugging.
 
-**Location:** `src/utils/ApiError.ts`
+**Directory structure:** `src/utils/errors/`
+
+#### `ApiError` (base class) - `ApiError.ts`
 
 ```ts
-class ApiError extends Error {
+export class ApiError extends Error {
 	public statusCode: number;
 	public success: boolean;
 	public errors: string[];
 
-	constructor(statusCode: number, message = "Something went wrong", errors: string[] = []) {
-		super(message);
-		this.statusCode = statusCode;
-		this.success = false;
-		this.errors = errors;
-
-		// This ensures the stack trace is captured correctly for our custom error.
-		Error.captureStackTrace(this, this.constructor);
-	}
+	constructor(statusCode: number, message?: string, errors?: string[]);
 }
+```
 
-export { ApiError };
+#### Special Error Classes - `SpecialErrors.ts`
+
+```ts
+import { ApiError } from "./ApiError";
+
+export class BadRequestError extends ApiError {
+	/* 400 */
+}
+export class UnauthorizedError extends ApiError {
+	/* 401 */
+}
+export class ForbiddenError extends ApiError {
+	/* 403 */
+}
+export class NotFoundError extends ApiError {
+	/* 404 */
+}
+export class ConflictError extends ApiError {
+	/* 409 */
+}
 ```
 
 **Usage in controllers:**
 
 ```ts
-// We can now throw errors with the appropriate status codes from our logic.
-if (!user) {
-	throw new ApiError(404, "User not found");
-}
+import { NotFoundError, ConflictError } from "@/utils/errors";
 
-if (existingUser) {
-	throw new ApiError(409, "A user with this email already exists."); // 409 Conflict
-}
+if (!user) throw new NotFoundError("User not found");
+if (existingUser) throw new ConflictError("A user with this email already exists.");
 ```
 
 ### The `asyncHandler` Utility

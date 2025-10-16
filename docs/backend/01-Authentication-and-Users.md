@@ -177,11 +177,13 @@ async function verifyEmail(req: Request<any, any, VerifyEmailRequest>, res: Resp
 ```ts
 import type { GetCurrentUserResponse } from "@/types";
 import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/ApiResponse";
 
 async function getCurrentUser(req: Request, res: Response<GetCurrentUserResponse>): Promise<void> {
 	// Get userId from req.user (auth middleware)
 	// Fetch user by ID
-	// Send user as JSON (GetCurrentUserResponse)
+	// Send a success response using the ApiResponse class.
+	return res.status(200).json(new ApiResponse<GetCurrentUserResponse>(200, user, "User retrieved successfully"));
 }
 ```
 
@@ -190,6 +192,7 @@ async function getCurrentUser(req: Request, res: Response<GetCurrentUserResponse
 ```ts
 import type { UpdateProfileRequest, UpdateProfileResponse } from "@/types";
 import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/ApiResponse";
 
 async function updateProfile(
 	req: Request<any, any, UpdateProfileRequest>,
@@ -197,7 +200,8 @@ async function updateProfile(
 ): Promise<void> {
 	// Get userId from req.user
 	// Update displayName
-	// Return updated user as JSON (UpdateProfileResponse)
+	// Send a success response using the ApiResponse class.
+	return res.status(200).json(new ApiResponse<UpdateProfileResponse>(200, updatedUser, "Profile updated successfully"));
 }
 ```
 
@@ -206,6 +210,7 @@ async function updateProfile(
 ```ts
 import type { UpdateAvatarRequest, UpdateAvatarResponse } from "@/types";
 import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/ApiResponse";
 
 async function updateAvatar(
 	req: Request<any, any, UpdateAvatarRequest>,
@@ -214,7 +219,8 @@ async function updateAvatar(
 	// Get userId from req.user
 	// Validate avatarUrl format (should be valid URI)
 	// Update user's avatarUrl in database
-	// Return updated user as JSON (UpdateAvatarResponse)
+	// Send a success response using the ApiResponse class.
+	return res.status(200).json(new ApiResponse<UpdateAvatarResponse>(200, updatedUser, "Avatar updated successfully"));
 }
 ```
 
@@ -245,12 +251,13 @@ Create a middleware to verify JWT tokens and attach user info to the request:
 ```ts
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { UnauthorizedError } from "@/utils/errors";
 
 async function authenticate(req: Request, res: Response, next: NextFunction): Promise<void> {
 	// Extract token from cookie or Authorization header
-	// If no token found: 401 Unauthorized
-	// Verify token using JWT
-	// If verification fails (invalid/expired): 401 Unauthorized
+	// If no token is found, or if verification fails (invalid/expired),
+	// throw an UnauthorizedError. The global error handler will format the 401 response.
+	// Example: throw new UnauthorizedError("Authentication required. Please log in.");
 	// Attach user id to request object
 	// Call next()
 }
@@ -260,4 +267,4 @@ export { authenticate };
 
 **Error Responses:**
 
-- **401 Unauthorized:** Missing token, invalid token, or expired token
+- **401 Unauthorized:** Missing token, invalid token, or expired token. Throw `UnauthorizedError`.
