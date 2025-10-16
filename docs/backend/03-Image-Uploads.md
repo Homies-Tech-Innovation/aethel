@@ -133,18 +133,7 @@ async function createImage(req: Request<any, any, CreateImageRequest>, res: Resp
   - `file`: File (required, `multipart/form-data` field)
   - `document_id`: UUID (optional, associates image with a document)
 - **Response:** `CreateImageResponse` (201 Created)
-  - `_id`: ObjectId
-  - `userId`: ObjectId
-  - `documentId`: ObjectId
-  - `folderId`: ObjectId
-  - `storageUrl`: string
-  - `filename`: string
-  - `mimeType`: string
-  - `pendingDelete`: boolean
-  - `markedForDeleteAt`: Date | null
-  - `createdAt`: Date
-  - `updatedAt`: Date
-- **Errors:** `400` (missing file), `401` (unauthorized), `415` (unsupported media type), `500` (server error).
+- **Errors:** 400 (missing file), 401 (unauthorized), 415 (unsupported media type), 500 (server error)
 
 #### `GET /images/{id}`
 
@@ -161,18 +150,7 @@ async function getImage(req: Request, res: Response): Promise<void> {
 ```
 
 - **Response:** `GetImageResponse` (200 OK)
-  - `_id`: ObjectId
-  - `userId`: ObjectId
-  - `documentId`: ObjectId
-  - `folderId`: ObjectId
-  - `storageUrl`: string
-  - `filename`: string
-  - `mimeType`: string
-  - `pendingDelete`: boolean
-  - `markedForDeleteAt`: Date | null
-  - `createdAt`: Date
-  - `updatedAt`: Date
-- **Errors:** `404` (not found).
+- **Errors:** 404 (not found)
 
 ### Cascading Deletes
 

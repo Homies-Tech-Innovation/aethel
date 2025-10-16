@@ -15,6 +15,11 @@
       ```ts
       req.headers["authorization"]?.replace("Bearer ", "");
       ```
+- **Token Payload:**
+  - Include only the `userId` (as a string)
+  - Do not include sensitive data (email, password, roles)
+  - Do not include frequently changing data (display name, avatar)
+  - Keep payload minimal for smaller token size and better performance
 - **Cookie Options:**
   ```ts
   const cookieOptions = {
@@ -225,6 +230,28 @@ async function deleteUser(req: Request, res: Response): Promise<void> {
 
 - **Response:** 204 No Content
 
-## Auth Middleware
+## Auth Middleware Setup
 
-[TODO]
+### Authentication Middleware
+
+Create a middleware to verify JWT tokens and attach user info to the request:
+
+```ts
+import type { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+
+async function authenticate(req: Request, res: Response, next: NextFunction): Promise<void> {
+	// Extract token from cookie or Authorization header
+	// If no token found: 401 Unauthorized
+	// Verify token using JWT
+	// If verification fails (invalid/expired): 401 Unauthorized
+	// Attach user id to request object
+	// Call next()
+}
+
+export { authenticate };
+```
+
+**Error Responses:**
+
+- **401 Unauthorized:** Missing token, invalid token, or expired token

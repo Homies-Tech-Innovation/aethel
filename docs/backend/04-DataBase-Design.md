@@ -24,7 +24,7 @@ interface Document {
 	_id: ObjectId;
 	userId: ObjectId; // references User._id
 	folderId: ObjectId; // references Folder._id
-	filename: string;
+	fileName: string;
 	content: string;
 	createdAt: Date;
 	updatedAt: Date;
@@ -40,7 +40,7 @@ interface Image {
 	documentId: ObjectId; // references Document._id
 	folderId: ObjectId; // references Folder._id
 	storageUrl: string;
-	filename: string;
+	fileName: string;
 	mimeType: string;
 	pendingDelete: boolean; // Default: false
 	markedForDeleteAt: Date | null;
@@ -125,10 +125,10 @@ interface WorkspaceNode {
    - `parentId`: convert to string (null if root)
 3. **Union with the Documents collection**:
    - Filter by `userId`
-   - Transform: `id` from `_id`, `name` from `filename`, `type` = `"file"`, `parentId` from `folderId`
+   - Transform: `id` from `_id`, `name` from `fileName`, `type` = `"file"`, `parentId` from `folderId`
 4. **Union with the Images collection**:
    - Filter by `userId`
-   - Transform: `id` from `_id`, `name` from `filename`, `type` = `"file"`, `parentId` from `folderId`
+   - Transform: `id` from `_id`, `name` from `fileName`, `type` = `"file"`, `parentId` from `folderId`
 5. **Return** a flat array of all nodes with `parentId` references.
 
 #### Part 2: Node.js Nesting (Build Tree)
@@ -176,13 +176,13 @@ function buildTree(parentId: string | null, items: WorkspaceNode[]): WorkspaceNo
 function extractImageReferences(content: string): string[];
 ```
 
-**Purpose**: Parse document content and extract all image filenames/URLs.
+**Purpose**: Parse document content and extract all image fileNames/URLs.
 
 **Algorithm**:
 
 1. Define a regex pattern for image syntax (to be determined during implementation).
 2. Use `content.matchAll(regex)` to find all image references.
-3. Extract the filename or URL from each match.
+3. Extract the fileName or URL from each match.
 4. Return an array of unique image references.
 
 ### 2. Mark Images for Deletion
@@ -198,7 +198,7 @@ async function markImagesForDeletion(documentId: string, oldContent: string, new
 1. Extract image references from `oldContent` using `extractImageReferences()`.
 2. Extract image references from `newContent` using `extractImageReferences()`.
 3. Find deleted images: `deletedImages = oldContent images NOT in newContent images`.
-4. Query the Images collection where `documentId` matches AND `filename` is in the `deletedImages` array.
+4. Query the Images collection where `documentId` matches AND `fileName` is in the `deletedImages` array.
 5. Update matched images: set `pendingDelete: true` and `markedForDeleteAt: new Date()`.
 6. Return the count of images marked.
 

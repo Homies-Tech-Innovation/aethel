@@ -24,7 +24,7 @@ backend/
 │   │   ├── config/         # Environment variables and app config
 │   │   ├── controllers/    # Route handlers
 │   │   ├── middlewares/    # Custom Express middlewares
-│   │   ├── prisma/         # Prisma schema, client, and migrations
+│   │   ├── models/         # Mongoose models and schemas
 │   │   ├── routes/         # Express route definitions
 │   │   ├── services/       # Business logic and API integrations
 │   │   ├── types/          # Shared/generated TypeScript types
@@ -72,3 +72,75 @@ throw new ApiError<BadRequestError>("Email is already in use");
   - `info`: Log all HTTP requests and responses.
   - `error`: Log uncaught exceptions and operational errors.
   - `debug`: Log key steps in service logic (should be disabled in production).
+
+## 6. Router Organization
+
+**Separation of Concerns:**
+
+- Each resource (auth, users, folders, documents, images) gets its own route file
+- Route files handle path definitions and middleware application
+- Controllers handle business logic
+
+**Structure:**
+
+```text
+routes/
+├── auth.routes.ts      # /auth/_ endpoints
+├── users.routes.ts     # /users/_ endpoints
+├── folders.routes.ts   # /folders/_ endpoints
+├── documents.routes.ts # /documents/_ endpoints
+└── images.routes.ts    # /images/_ endpoints
+```
+
+**Route File Pattern:**
+Each route file exports a Router instance with all paths for that resource.
+
+**Example Template:**
+
+```ts
+// routes/example.routes.ts
+import { Router } from "express";
+import { authenticate } from "../middleware/authenticate";
+
+const router = Router();
+
+// Public route
+router.get("/", sampleController);
+
+// Protected route
+router.post("/", authenticate, sampleController);
+
+export default router;
+```
+
+**Main App Integration:**
+
+```ts
+import authRoutes from "@/routes/auth.routes";
+import usersRoutes from "@/routes/users.routes";
+// ... other routes
+
+app.use("/auth", authRoutes);
+app.use("/users", usersRoutes);
+// ... other mounts
+```
+
+**Middleware Application:**
+
+- Apply `authenticate` middleware per-route on protection needs
+- Public routes (register, login) don't need authentication
+- Protected routes (profile, logout) require authentication
+
+## Middleware Execution Order
+
+Middleware runs in the order it's registered. Here's the required sequence:
+
+1. **Security headers (helmet)** - First line of defense, sets HTTP security headers
+2. **Body parsers** - Parse JSON, URL-encoded data, and cookies before anything needs to read them
+3. **OpenAPI validator** - Validates request structure against the API contract
+4. **Routes** - Your business logic, includes authentication middleware where needed
+5. **Error handler** - Catches all errors from middleware and routes, must be registered last
+
+**Note:** Authentication middleware runs within routes, not globally, so public endpoints remain accessible.
+
+## Global Error Handler
