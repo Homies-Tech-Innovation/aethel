@@ -178,7 +178,7 @@ async function verifyEmail(req: Request<any, any, VerifyEmailRequest>, res: Resp
 import type { GetCurrentUserResponse } from "@/types";
 import type { Request, Response } from "express";
 
-async function getCurrentUser(req: Request, res: Response): Promise<void> {
+async function getCurrentUser(req: Request, res: Response<GetCurrentUserResponse>): Promise<void> {
 	// Get userId from req.user (auth middleware)
 	// Fetch user by ID
 	// Send user as JSON (GetCurrentUserResponse)
@@ -191,9 +191,12 @@ async function getCurrentUser(req: Request, res: Response): Promise<void> {
 import type { UpdateProfileRequest, UpdateProfileResponse } from "@/types";
 import type { Request, Response } from "express";
 
-async function updateProfile(req: Request<any, any, UpdateProfileRequest>, res: Response): Promise<void> {
+async function updateProfile(
+	req: Request<any, any, UpdateProfileRequest>,
+	res: Response<UpdateProfileResponse>
+): Promise<void> {
 	// Get userId from req.user
-	// Update display_name / username
+	// Update displayName
 	// Return updated user as JSON (UpdateProfileResponse)
 }
 ```
@@ -204,16 +207,19 @@ async function updateProfile(req: Request<any, any, UpdateProfileRequest>, res: 
 import type { UpdateAvatarRequest, UpdateAvatarResponse } from "@/types";
 import type { Request, Response } from "express";
 
-async function updateAvatar(req: Request, res: Response): Promise {
+async function updateAvatar(
+	req: Request<any, any, UpdateAvatarRequest>,
+	res: Response<UpdateAvatarResponse>
+): Promise<void> {
 	// Get userId from req.user
-	// Validate avatar_url format (should be valid URI)
-	// Update user's avatar_url in database
+	// Validate avatarUrl format (should be valid URI)
+	// Update user's avatarUrl in database
 	// Return updated user as JSON (UpdateAvatarResponse)
 }
 ```
 
-- **Request:** `UpdateAvatarRequest` (contains `avatar_url`)
-- **Response:** `UpdateAvatarResponse` (`User` schema with updated avatar_url)
+- **Request:** `UpdateAvatarRequest` (contains `avatarUrl`)
+- **Response:** `UpdateAvatarResponse` (`User` schema with updated `avatarUrl`)
 
 #### `DELETE /users/me`
 

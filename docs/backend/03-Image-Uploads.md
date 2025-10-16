@@ -115,24 +115,28 @@ export { validateMimeType };
 #### `POST /images`
 
 ```ts
-import type { CreateImageRequest, CreateImageResponse } from "@/types";
+import type { UploadImageRequest, UploadImageResponse } from "@/types";
 import type { Request, Response } from "express";
 
-async function createImage(req: Request<any, any, CreateImageRequest>, res: Response): Promise<void> {
+async function createImage(
+	req: Request<any, any, UploadImageRequest>,
+	res: Response<UploadImageResponse>
+): Promise<void> {
 	// Get userId from req.user (auth middleware)
 	// Validate input (Multer middleware)
 	// Validate MIME type against ALLOWED_IMAGE_MIMETYPES
 	// Upload image to Cloudinary
 	// Save metadata to database
-	// Return created image record (CreateImageResponse)
+	// Return created image record (UploadImageResponse)
 	// Send 201 Created
 }
 ```
 
-- **Request:** `CreateImageRequest`
+- **Request:** `UploadImageRequest`
   - `file`: File (required, `multipart/form-data` field)
-  - `document_id`: UUID (optional, associates image with a document)
-- **Response:** `CreateImageResponse` (201 Created)
+  - `documentId`: UUID (optional, associates image with a document)
+  - `folderId`: UUID (optional, associates image with a folder)
+- **Response:** `UploadImageResponse` (201 Created)
 - **Errors:** 400 (missing file), 401 (unauthorized), 415 (unsupported media type), 500 (server error)
 
 #### `GET /images/{id}`
@@ -141,7 +145,7 @@ async function createImage(req: Request<any, any, CreateImageRequest>, res: Resp
 import type { GetImageResponse } from "@/types";
 import type { Request, Response } from "express";
 
-async function getImage(req: Request, res: Response): Promise<void> {
+async function getImage(req: Request, res: Response<GetImageResponse>): Promise<void> {
 	// Extract image ID from req.params.id
 	// Fetch image metadata from database
 	// Return image metadata (GetImageResponse)

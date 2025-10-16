@@ -486,7 +486,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
     patch:
       summary: Update Document
-      description: Updates a document's content, filename, or folder.
+      description: Updates a document's content, fileName, or folder.
       tags:
         - Documents
       security:
@@ -886,7 +886,7 @@ components:
         storageUrl:
           type: string
           example: https://cdn.example.com/images/abc123.png
-        filename:
+        fileName:
           type: string
           example: screenshot.png
         mimeType:
@@ -966,7 +966,7 @@ components:
             description: The ID of the document to be updated.
           fileName:
             type: string
-            description: The original filename, for context on the frontend.
+            description: The original fileName, for context on the frontend.
           content:
             type: string
             description: The new, suggested content for the document.

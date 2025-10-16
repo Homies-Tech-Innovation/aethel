@@ -46,24 +46,128 @@ See the [Docker Guide](../../backend/docker-guide.md) for details.
 
 > **Note:** This setup is intentionally restrictive for simplicity. If running the backend in Docker becomes necessary (e.g., for CI or testing), this guide will be updated.
 
-## 4. Error Handling
+## 4. Reusable API Components and Error Handling
 
-A standardized error handling approach is required for a predictable API.
+To keep our codebase clean, predictable, and DRY (Don't Repeat Yourself), we'll implement a standardized pattern for handling all API responses and errors. This involves a set of reusable utility classes and middleware.
 
-- **Error Schema:** All errors returned to the client must conform to the `Error` schema in `types`.
+### The `ApiResponse` Class
 
-```ts
-import type { BadRequestError, UnauthorizedError, NotFoundError } from "@/types";
-```
+For all successful responses, we'll use a consistent structure. The `ApiResponse` class wraps our data payload, ensuring that the frontend always receives a predictable JSON object. We're using generics (`<T>`) so we get full TypeScript support from our OpenAPI-generated types, which makes our controllers strongly typed and less error-prone.
 
-e.g.
+**Location:** `src/utils/ApiResponse.ts`
 
 ```ts
-throw new ApiError<BadRequestError>("Email is already in use");
+class ApiResponse<T> {
+	public statusCode: number;
+	public data: T;
+	public message: string;
+	public success: boolean;
+
+	constructor(statusCode: number, data: T, message = "Success") {
+		this.statusCode = statusCode;
+		this.data = data;
+		this.message = message;
+		this.success = true;
+	}
+}
+
+export { ApiResponse };
 ```
 
-- Implement a global `ApiError` class to raise errors, which are handled by a global error middleware.
-- The global error handler formats all errors into the standard response and sends them to the client.
+**Usage in controllers:**
+
+```ts
+// Send a success response with a typed data payload
+return res.status(200).json(new ApiResponse<GetCurrentUserResponse>(200, user, "User retrieved successfully"));
+
+// Send a success response for an action that doesn't return data
+return res.status(200).json(new ApiResponse(200, {}, "Logout successful"));
+```
+
+### The `ApiError` Class
+
+For handling our own operational errors (e.g., "user not found," "email already in use"), we'll use a custom `ApiError` class. This lets us throw errors from anywhere in our services or controllers with a specific HTTP status code. Our global handler will then catch these and format them correctly for the client.
+
+**Location:** `src/utils/ApiError.ts`
+
+```ts
+class ApiError extends Error {
+	public statusCode: number;
+	public success: boolean;
+	public errors: string[];
+
+	constructor(statusCode: number, message = "Something went wrong", errors: string[] = []) {
+		super(message);
+		this.statusCode = statusCode;
+		this.success = false;
+		this.errors = errors;
+
+		// This ensures the stack trace is captured correctly for our custom error.
+		Error.captureStackTrace(this, this.constructor);
+	}
+}
+
+export { ApiError };
+```
+
+**Usage in controllers:**
+
+```ts
+// We can now throw errors with the appropriate status codes from our logic.
+if (!user) {
+	throw new ApiError(404, "User not found");
+}
+
+if (existingUser) {
+	throw new ApiError(409, "A user with this email already exists."); // 409 Conflict
+}
+```
+
+### The `asyncHandler` Utility
+
+To avoid littering our controllers with repetitive `try...catch` blocks for asynchronous operations, we'll use a simple higher-order function. The `asyncHandler` wraps our async route handlers, catches any rejected promises (errors), and automatically passes them to our global error handler.
+
+**Location:** `src/utils/asyncHandler.ts`
+
+```ts
+import { Request, Response, NextFunction } from "express";
+
+const asyncHandler = (fn: Function) => {
+	return (req: Request, res: Response, next: NextFunction) => {
+		Promise.resolve(fn(req, res, next)).catch(next);
+	};
+};
+```
+
+**Usage in routes:**
+
+```ts
+// We just wrap the controller function when defining the route.
+router.get("/users/me", authenticate, asyncHandler(getCurrentUser));
+router.post("/register", asyncHandler(registerUser));
+```
+
+### Global Error Handler
+
+This is our application's final safety net. We'll create a single error-handling middleware that catches all errors—whether they're an `ApiError` we threw, a validation error from `express-openapi-validator`, or an unexpected system error. Its job is to format the error into the consistent JSON response that matches our OpenAPI `Error` schema.
+
+**Location:** `src/middlewares/errorHandler.middleware.ts`
+
+```ts
+import type { Request, Response, NextFunction } from "express";
+import { ApiError } from "@/utils/ApiError";
+
+function errorHandler(err: any, req: Request, res: Response, next: NextFunction): void {
+	// Log error for debugging
+	// Determine status code and message
+	// If ApiError: use err.statusCode and err.message
+	// Otherwise: default to 500 and generic message
+	// Format response matching Error schema from OpenAPI
+	// Send a JSON response to client
+}
+```
+
+**Integration:** This middleware must be registered **last** in our `index.ts`, after all other `app.use()` calls and routes. This ensures it catches errors from everything that came before it.
 
 ## 5. Logging
 
@@ -142,5 +246,3 @@ Middleware runs in the order it's registered. Here's the required sequence:
 5. **Error handler** - Catches all errors from middleware and routes, must be registered last
 
 **Note:** Authentication middleware runs within routes, not globally, so public endpoints remain accessible.
-
-## Global Error Handler
