@@ -102,7 +102,7 @@ export class ApiError extends Error {
 #### Special Error Classes - `SpecialErrors.ts`
 
 ```ts
-import { ApiError } from "./ApiError";
+import { ApiError } from "@/utils/errors/ApiError";
 
 export class BadRequestError extends ApiError {
 	/* 400 */
@@ -248,8 +248,9 @@ Middleware runs in the order it's registered. Here's the required sequence:
 
 1. **Security headers (helmet)** - First line of defense, sets HTTP security headers
 2. **Body parsers** - Parse JSON, URL-encoded data, and cookies before anything needs to read them
-3. **OpenAPI validator** - Validates request structure against the API contract
-4. **Routes** - Your business logic, includes authentication middleware where needed
-5. **Error handler** - Catches all errors from middleware and routes, must be registered last
+3. **Multer (file upload handling)** - Parse multipart/form-data for routes that accept file uploads (prefer per-route registration to avoid interfering with other parsers)
+4. **OpenAPI validator** - Validates request structure against the API contract
+5. **Routes** - Your business logic, includes authentication middleware where needed
+6. **Error handler** - Catches all errors from middleware and routes, must be registered last
 
 **Note:** Authentication middleware runs within routes, not globally, so public endpoints remain accessible.
