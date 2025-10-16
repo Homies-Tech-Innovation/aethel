@@ -16,6 +16,27 @@
 
 - **design** - every child will have a border line to left to inprove visual hierarchy
 
+#### lower tab
+- **height** - 50px
+- **margin** - 15px
+
+--------->
+##### Settings
+
+- icon set to left 
+- opens the settings menue
+##### downloads 
+
+- icon set to left 
+- opens popup on click
+
+    ![download popup image](../assets/refrence-images/download-popup.png)
+
+    - frame width - 150
+    - padding - 3px
+    - gap - 3px
+    
+
 ## editor
 
 - empty space with "create new file" button if no tab is open
