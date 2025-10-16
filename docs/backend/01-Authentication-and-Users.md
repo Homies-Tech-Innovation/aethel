@@ -224,3 +224,7 @@ async function deleteUser(req: Request, res: Response): Promise<void> {
 ```
 
 - **Response:** 204 No Content
+
+## Auth Middleware
+
+[TODO]
