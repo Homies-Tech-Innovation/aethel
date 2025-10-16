@@ -9,7 +9,7 @@
 		"build": "tsc && tsc-alias",
 		"start": "node dist/server.js",
 		"dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts",
-		"generate:types": "openapi-typescript ../../api-specs/openapi.yaml -o src/types/api.d.ts"
+		"generate:types-f": "openapi-typescript ../../api-specs/openapi.yaml -o src/types/openapi/openapi-frontend.d.ts"
 	},
 	"keywords": [],
 	"author": "",

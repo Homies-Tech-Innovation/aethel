@@ -1,4 +1,4 @@
-import type { paths, components } from "./api";
+import type { paths, components } from "./openapi/openapi-frontend"; // Assuming the generated file is named openapi-types.ts
 
 // ============================================
 // AUTHENTICATION ENDPOINTS
@@ -102,9 +102,6 @@ export type UploadImageResponse = components["schemas"]["Image"];
 
 // GET /images/{id}
 export type GetImageResponse = components["schemas"]["Image"];
-
-// DELETE /images/{id}
-// No request or response body (204 No Content)
 
 // ============================================
 // AI ENDPOINTS
