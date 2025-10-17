@@ -2,17 +2,14 @@ openapi: 3.0.0
 info:
   title: Aethel API Contract
   version: 1.1.0
-  description: This is the Aethel API contract (v1.1.0), defining endpoints for authentication, user management, document hierarchy, AI-powered features, and other core services used by Aethel's frontend and backend.
-
+  description: This is the Aethel API contract (v1.1.0), defining endpoints for
+    authentication, user management, document hierarchy, AI-powered features, and
+    other core services used by Aethel's frontend and backend.
 servers:
   - url: http://localhost:3000
     description: Development server
-
 paths:
-  # ============================================
-  # AUTH ENDPOINTS
-  # ============================================
-  /auth/register:
+  "/auth/register":
     post:
       summary: Register a new user
       description: Creates a new user account.
@@ -24,14 +21,14 @@ paths:
           application/json:
             schema:
               type: object
-              required: [display_name, username, email, password]
+              required:
+                - displayName
+                - email
+                - password
               properties:
-                display_name:
+                displayName:
                   type: string
                   example: John Doe
-                username:
-                  type: string
-                  example: johndoe
                 email:
                   type: string
                   format: email
@@ -49,10 +46,11 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           $ref: "#/components/responses/BadRequest"
-  /auth/login:
+  "/auth/login":
     post:
       summary: Log In A User
-      description: Authenticates a user and sets access and refresh tokens in secure, HttpOnly cookies.
+      description: Authenticates a user and sets access and refresh tokens in secure,
+        HttpOnly cookies.
       tags:
         - Auth
       requestBody:
@@ -61,7 +59,9 @@ paths:
           application/json:
             schema:
               type: object
-              required: [email, password]
+              required:
+                - email
+                - password
               properties:
                 email:
                   type: string
@@ -78,10 +78,10 @@ paths:
             Set-Cookie:
               schema:
                 type: string
-                example: "accessToken=...; refreshToken=..."
+                example: accessToken=...; refreshToken=...
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /auth/logout:
+  "/auth/logout":
     post:
       summary: Log Out A User
       description: Clears the authentication cookies.
@@ -94,10 +94,10 @@ paths:
             Set-Cookie:
               schema:
                 type: string
-                example: "accessToken=; Max-Age=0; refreshToken=; Max-Age=0"
+                example: accessToken=; Max-Age=0; refreshToken=; Max-Age=0
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /auth/verify-email:
+  "/auth/verify-email":
     post:
       summary: Verify Email Address
       description: Confirms a user's email address using a token.
@@ -109,9 +109,10 @@ paths:
           application/json:
             schema:
               type: object
-              required: [verification_token]
+              required:
+                - verificationToken
               properties:
-                verification_token:
+                verificationToken:
                   type: string
                   example: hygbYGIYU...
       responses:
@@ -119,7 +120,7 @@ paths:
           description: Email verified successfully
         "400":
           $ref: "#/components/responses/BadRequest"
-  /auth/forgot-password:
+  "/auth/forgot-password":
     post:
       summary: Request Password Reset
       description: Starts the password reset flow.
@@ -131,7 +132,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [email]
+              required:
+                - email
               properties:
                 email:
                   type: string
@@ -142,7 +144,7 @@ paths:
           description: Password reset email sent
         "404":
           $ref: "#/components/responses/NotFound"
-  /auth/reset-password:
+  "/auth/reset-password":
     post:
       summary: Perform Password Reset
       description: Sets a new password using a reset token.
@@ -154,12 +156,14 @@ paths:
           application/json:
             schema:
               type: object
-              required: [reset_token, new_password]
+              required:
+                - resetToken
+                - newPassword
               properties:
-                reset_token:
+                resetToken:
                   type: string
                   example: the-unique-token-from-the-email-link...
-                new_password:
+                newPassword:
                   type: string
                   format: password
                   example: a-new-strong-password
@@ -168,10 +172,11 @@ paths:
           description: Password reset successful
         "400":
           $ref: "#/components/responses/BadRequest"
-  /auth/refresh:
+  "/auth/refresh":
     post:
       summary: Refresh Access Token
-      description: Issues a new access token using the refresh token from the cookie, returning it in a new cookie.
+      description: Issues a new access token using the refresh token from the cookie,
+        returning it in a new cookie.
       tags:
         - Auth
       responses:
@@ -181,14 +186,10 @@ paths:
             Set-Cookie:
               schema:
                 type: string
-                example: "accessToken=..."
+                example: accessToken=...
         "401":
           $ref: "#/components/responses/Unauthorized"
-
-  # ============================================
-  # USER ENDPOINTS
-  # ============================================
-  /users/me:
+  "/users/me":
     get:
       summary: Get Current User's Profile
       description: Retrieves the profile for the authenticated user.
@@ -207,7 +208,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
     patch:
       summary: Update Current User's Profile
-      description: Updates profile information like display_name or username.
+      description: Updates profile information like displayName.
       tags:
         - Users
       security:
@@ -219,12 +220,9 @@ paths:
             schema:
               type: object
               properties:
-                display_name:
+                displayName:
                   type: string
                   example: John Doe
-                username:
-                  type: string
-                  example: johndoe123
       responses:
         "200":
           description: Successful response
@@ -248,7 +246,7 @@ paths:
           description: No Content - User successfully deleted
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /users/me/avatar:
+  "/users/me/avatar":
     patch:
       summary: Update Current User's Avatar
       description: Updates the avatar URL for the authenticated user.
@@ -262,9 +260,10 @@ paths:
           application/json:
             schema:
               type: object
-              required: [avatar_url]
+              required:
+                - avatarUrl
               properties:
-                avatar_url:
+                avatarUrl:
                   type: string
                   format: uri
                   example: https://cdn.example.com/avatars/user123.png
@@ -279,14 +278,11 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
-
-  # ============================================
-  # WORKSPACE ENDPOINTS
-  # ============================================
-  /workspace/hierarchy:
+  "/workspace/hierarchy":
     get:
       summary: Get Workspace Hierarchy
-      description: Retrieves the entire nested folder and document structure for the authenticated user. Ideal for building a file tree UI.
+      description: Retrieves the entire nested folder and document structure for the
+        authenticated user. Ideal for building a file tree UI.
       tags:
         - Workspace
       security:
@@ -302,11 +298,7 @@ paths:
                   $ref: "#/components/schemas/WorkspaceNode"
         "401":
           $ref: "#/components/responses/Unauthorized"
-
-  # ============================================
-  # FOLDER ENDPOINTS
-  # ============================================
-  /folders:
+  "/folders":
     post:
       summary: Create a New Folder
       description: Creates a new folder for the authenticated user.
@@ -320,12 +312,13 @@ paths:
           application/json:
             schema:
               type: object
-              required: [name]
+              required:
+                - name
               properties:
                 name:
                   type: string
                   example: My Documents
-                parent_id:
+                parentId:
                   type: string
                   format: uuid
                   nullable: true
@@ -341,7 +334,7 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /folders/{id}:
+  "/folders/{id}":
     get:
       summary: Get Folder by ID
       description: Retrieves a specific folder by ID.
@@ -369,7 +362,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
     patch:
       summary: Update Folder
-      description: Updates a folder's name or parent.
+      description: Updates a folder's name.
       tags:
         - Folders
       security:
@@ -391,10 +384,6 @@ paths:
                 name:
                   type: string
                   example: Updated Folder Name
-                parent_id:
-                  type: string
-                  format: uuid
-                  nullable: true
       responses:
         "200":
           description: Folder updated successfully
@@ -429,11 +418,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         "401":
           $ref: "#/components/responses/Unauthorized"
-
-  # ============================================
-  # DOCUMENT ENDPOINTS
-  # ============================================
-  /documents:
+  "/documents":
     post:
       summary: Create a New Document
       description: Creates a new document with markdown content.
@@ -447,15 +432,17 @@ paths:
           application/json:
             schema:
               type: object
-              required: [file_name, content]
+              required:
+                - fileName
+                - content
               properties:
-                file_name:
+                fileName:
                   type: string
                   example: My Note.md
                 content:
                   type: string
                   example: "# Hello World\n\nThis is **markdown** content"
-                folder_id:
+                folderId:
                   type: string
                   format: uuid
                   nullable: true
@@ -471,7 +458,7 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /documents/{id}:
+  "/documents/{id}":
     get:
       summary: Get Document by ID
       description: Retrieves a specific document by ID.
@@ -499,7 +486,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
     patch:
       summary: Update Document
-      description: Updates a document's content, filename, or folder.
+      description: Updates a document's content, fileName, or folder.
       tags:
         - Documents
       security:
@@ -518,13 +505,13 @@ paths:
             schema:
               type: object
               properties:
-                file_name:
+                fileName:
                   type: string
                   example: Updated Note.md
                 content:
                   type: string
                   example: "# Updated Content"
-                folder_id:
+                folderId:
                   type: string
                   format: uuid
                   nullable: true
@@ -562,7 +549,6 @@ paths:
           $ref: "#/components/responses/NotFound"
         "401":
           $ref: "#/components/responses/Unauthorized"
-
   # ============================================
   # IMAGE ENDPOINTS
   # ============================================
@@ -580,15 +566,20 @@ paths:
           multipart/form-data:
             schema:
               type: object
-              required: [file]
+              required:
+                - file
               properties:
                 file:
                   type: string
                   format: binary
-                document_id:
+                documentId:
                   type: string
                   format: uuid
                   description: Optionally associate image with a document.
+                folderId:
+                  type: string
+                  format: uuid
+                  description: Optionally associate image with a folder for hierarchy.
       responses:
         "201":
           description: Image uploaded successfully
@@ -626,35 +617,11 @@ paths:
           $ref: "#/components/responses/NotFound"
         "401":
           $ref: "#/components/responses/Unauthorized"
-    delete:
-      summary: Delete Image
-      description: Deletes an image.
-      tags:
-        - Images
-      security:
-        - CookieAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "204":
-          description: Image deleted successfully
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-
-  # ============================================
-  # AI ENDPOINTS
-  # ============================================
-  /ai/message:
+  "/ai/message":
     post:
       summary: Send a message to the AI
-      description: Sends a user's message to the AI for processing and receives a suggestion. Chat history is not supported.
+      description: Sends a user's message to the AI for processing and receives a
+        suggestion. Chat history is not supported.
       tags:
         - AI
       security:
@@ -665,11 +632,12 @@ paths:
           application/json:
             schema:
               type: object
-              required: [message]
+              required:
+                - message
               properties:
                 message:
                   type: string
-                  example: "Can you refactor this document to be more concise?"
+                  example: Can you refactor this document to be more concise?
       responses:
         "200":
           description: AI response received successfully.
@@ -681,13 +649,13 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /ai/chat:
+  "/ai/chat":
     post:
       summary: Send a message to the AI
       description: |-
         Sends a user's message to the AI for processing.
-        - To start a new chat, omit `chat_session_id`. The server will create a new session and return its ID.
-        - To continue an existing chat, provide the `chat_session_id`.
+        - To start a new chat, omit `chatSessionId`. The server will create a new session and return its ID.
+        - To continue an existing chat, provide the `chatSessionId`.
       tags:
         - AI
       security:
@@ -698,19 +666,22 @@ paths:
           application/json:
             schema:
               type: object
-              required: [message]
+              required:
+                - message
               properties:
-                chat_session_id:
+                chatSessionId:
                   type: string
                   format: uuid
                   nullable: true
-                  description: Provide to continue an existing chat, or null to start a new one.
+                  description: Provide to continue an existing chat, or null to start
+                    a new one.
                 message:
                   type: string
-                  example: "Can you refactor this document to be more concise?"
+                  example: Can you refactor this document to be more concise?
       responses:
         "200":
-          description: AI response received successfully. The session ID is always returned.
+          description: AI response received successfully. The session ID is always
+            returned.
           content:
             application/json:
               schema:
@@ -719,10 +690,11 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /ai/chats:
+  "/ai/chats":
     get:
       summary: Get All Chat Sessions
-      description: Retrieves a list of summaries for all past AI chat sessions for the user.
+      description: Retrieves a list of summaries for all past AI chat sessions for
+        the user.
       tags:
         - AI
       security:
@@ -738,7 +710,7 @@ paths:
                   $ref: "#/components/schemas/ChatSessionSummary"
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /ai/chats/{id}:
+  "/ai/chats/{id}":
     get:
       summary: Get Chat Session History
       description: Retrieves the full message history for a specific AI chat session.
@@ -785,10 +757,11 @@ paths:
           $ref: "#/components/responses/NotFound"
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /ai/suggestions/{id}:
+  "/ai/suggestions/{id}":
     get:
       summary: Get an AI Suggestion
-      description: Retrieves the content of changes for one or more documents as suggested by the AI.
+      description: Retrieves the content of changes for one or more documents as
+        suggested by the AI.
       tags:
         - AI
       security:
@@ -811,46 +784,40 @@ paths:
           $ref: "#/components/responses/NotFound"
         "401":
           $ref: "#/components/responses/Unauthorized"
-
-# ============================================
-# COMPONENTS
-# ============================================
 components:
   securitySchemes:
     CookieAuth:
       type: apiKey
       in: cookie
       name: accessToken
-
   schemas:
     AIResponseMessage:
       type: object
-      required: [message]
+      required:
+        - message
       properties:
         message:
           type: string
-          example: "Aethel is a powerful markdown editor..."
+          example: Aethel is a powerful markdown editor...
     User:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        username:
-          type: string
-        display_name:
+        displayName:
           type: string
         email:
           type: string
           format: email
-        avatar_url:
+        avatarUrl:
           type: string
           format: uri
           nullable: true
-        created_at:
+        createdAt:
           type: string
           format: date-time
-        updated_at:
+        updatedAt:
           type: string
           format: date-time
     Folder:
@@ -859,19 +826,19 @@ components:
         id:
           type: string
           format: uuid
-        user_id:
+        userId:
           type: string
           format: uuid
-        parent_id:
+        parentId:
           type: string
           format: uuid
           nullable: true
         name:
           type: string
-        created_at:
+        createdAt:
           type: string
           format: date-time
-        updated_at:
+        updatedAt:
           type: string
           format: date-time
     Document:
@@ -880,23 +847,23 @@ components:
         id:
           type: string
           format: uuid
-        user_id:
+        userId:
           type: string
           format: uuid
-        folder_id:
+        folderId:
           type: string
           format: uuid
           nullable: true
-        file_name:
+        fileName:
           type: string
           example: My Note.md
         content:
           type: string
           example: "# Hello World\n\nThis is **markdown**"
-        created_at:
+        createdAt:
           type: string
           format: date-time
-        updated_at:
+        updatedAt:
           type: string
           format: date-time
     Image:
@@ -905,47 +872,48 @@ components:
         id:
           type: string
           format: uuid
-        user_id:
+        userId:
           type: string
           format: uuid
-        document_id:
+        documentId:
           type: string
           format: uuid
           nullable: true
-        storage_url:
+        folderId:
+          type: string
+          format: uuid
+          nullable: true
+        storageUrl:
           type: string
           example: https://cdn.example.com/images/abc123.png
-        filename:
+        fileName:
           type: string
           example: screenshot.png
-        mime_type:
+        mimeType:
           type: string
           example: image/png
-        created_at:
+        createdAt:
           type: string
           format: date-time
-        updated_at:
+        updatedAt:
           type: string
           format: date-time
-
     WorkspaceNode:
       type: object
       properties:
         id:
           type: string
-          format: uuid
         name:
           type: string
-          example: My Documents
         type:
           type: string
-          enum: [folder, document]
-          example: folder
+          enum:
+            - folder
+            - file
         children:
           type: array
           items:
             $ref: "#/components/schemas/WorkspaceNode"
-          description: Present and non-empty only if the type is 'folder'.
     ChatSessionSummary:
       type: object
       properties:
@@ -954,8 +922,8 @@ components:
           format: uuid
         title:
           type: string
-          example: "Concise refactoring discussion"
-        created_at:
+          example: Concise refactoring discussion
+        createdAt:
           type: string
           format: date-time
     ChatMessage:
@@ -963,15 +931,18 @@ components:
       properties:
         role:
           type: string
-          enum: [user, ai]
+          enum:
+            - user
+            - ai
         content:
           type: string
-        suggestion_id:
+        suggestionId:
           type: string
           format: uuid
           nullable: true
-          description: The ID to fetch the content of an AI suggestion, if one was made.
-        created_at:
+          description: The ID to fetch the content of an AI suggestion, if one was
+            made.
+        createdAt:
           type: string
           format: date-time
     ChatSession:
@@ -989,24 +960,25 @@ components:
       items:
         type: object
         properties:
-          document_id:
+          documentId:
             type: string
             format: uuid
             description: The ID of the document to be updated.
-          file_name:
+          fileName:
             type: string
-            description: The original filename, for context on the frontend.
+            description: The original fileName, for context on the frontend.
           content:
             type: string
             description: The new, suggested content for the document.
     ChatInteractionResponse:
       type: object
       properties:
-        chat_session_id:
+        chatSessionId:
           type: string
           format: uuid
-          description: The unique identifier for the chat session. This is returned on every interaction.
-        ai_message:
+          description: The unique identifier for the chat session. This is returned
+            on every interaction.
+        aiMessage:
           $ref: "#/components/schemas/ChatMessage"
           description: The AI's response message.
     Error:
@@ -1016,7 +988,6 @@ components:
           type: string
         message:
           type: string
-
   responses:
     Unauthorized:
       description: Unauthorized - Invalid or missing token

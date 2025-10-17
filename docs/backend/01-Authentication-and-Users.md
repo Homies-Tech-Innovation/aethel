@@ -15,6 +15,11 @@
       ```ts
       req.headers["authorization"]?.replace("Bearer ", "");
       ```
+- **Token Payload:**
+  - Include only the `userId` (as a string)
+  - Do not include sensitive data (email, password, roles)
+  - Do not include frequently changing data (display name, avatar)
+  - Keep payload minimal for smaller token size and better performance
 - **Cookie Options:**
   ```ts
   const cookieOptions = {
@@ -43,19 +48,23 @@
 
 ```ts
 import type { RegisterRequest, RegisterResponse } from "@/types";
+import { ApiResponse } from "@/utils/ApiResponse";
+import { ConflictError } from "@/utils/errors";
 
 async function registerUser(req: Request<{}, {}, RegisterRequest>, res: Response<RegisterResponse>) {
 	// Validate input
 	// Check if user exists
+	if (existingUser) throw new ConflictError("A user with this email already exists.");
 	// Create user (password hashed via middleware)
 	// Send verification email
-	// Return user (RegisterResponse)
+	// Return user using ApiResponse<RegisterResponse>
+	return res.status(201).json(new ApiResponse<RegisterResponse>(201, createdUser, "User registered successfully"));
 	// Log registration event
 }
 ```
 
 - **Request:** `RegisterRequest`
-- **Response:** `RegisterResponse` (`User` schema)
+- **Response:** `ApiResponse<RegisterResponse>` (`User` schema)
 
 ### 1.2 Session Management
 
@@ -64,14 +73,18 @@ async function registerUser(req: Request<{}, {}, RegisterRequest>, res: Response
 ```ts
 import type { LoginRequest } from "@/types";
 import type { Request, Response } from "express";
+import { NotFoundError, UnauthorizedError } from "@/utils/errors";
 
 async function loginUser(req: Request<any, any, LoginRequest>, res: Response): Promise<void> {
 	// Validate input (OpenAPI middleware)
 	// Find user by email
+	if (!user) throw new NotFoundError("User not found");
 	// Compare password with hashed password
+	if (!isPasswordCorrect) throw new UnauthorizedError("Invalid credentials");
 	// Generate access & refresh tokens
 	// Set cookies for tokens
 	// Send 200 OK (no body)
+	res.status(200).send();
 }
 ```
 
@@ -82,15 +95,19 @@ async function loginUser(req: Request<any, any, LoginRequest>, res: Response): P
 
 ```ts
 import type { Request, Response } from "express";
+import { UnauthorizedError } from "@/utils/errors";
 
 async function refreshToken(req: Request, res: Response): Promise<void> {
 	// Read refresh token from cookie or header
 	// Verify JWT
+	if (verificationFails) throw new UnauthorizedError("Invalid refresh token");
 	// Fetch user from DB
 	// Check refresh token matches DB
+	if (tokenMismatch) throw new UnauthorizedError("Invalid refresh token");
 	// Generate new tokens
 	// Set cookies for tokens
 	// Send 200 OK (no body)
+	res.status(200).send();
 }
 ```
 
@@ -107,6 +124,7 @@ async function logoutUser(req: Request, res: Response): Promise<void> {
 	// Delete refresh token from DB
 	// Clear cookies for tokens
 	// Send 200 OK (no body)
+	res.status(200).send();
 }
 ```
 
@@ -124,6 +142,7 @@ async function forgotPassword(req: Request<any, any, ForgotPasswordRequest>, res
 	// Generate & store reset token
 	// Send password reset email
 	// Send 200 OK (no body)
+	res.status(200).send();
 }
 ```
 
@@ -134,14 +153,17 @@ async function forgotPassword(req: Request<any, any, ForgotPasswordRequest>, res
 ```ts
 import type { ResetPasswordRequest } from "@/types";
 import type { Request, Response } from "express";
+import { BadRequestError } from "@/utils/errors";
 
 async function resetPassword(req: Request<any, any, ResetPasswordRequest>, res: Response): Promise<void> {
 	// Validate input (OpenAPI middleware)
 	// Find user by reset token
 	// Check if token expired
+	if (isTokenInvalidOrExpired) throw new BadRequestError("Invalid or expired reset token");
 	// Update password (hashed via middleware)
 	// Delete reset token
 	// Send 200 OK (no body)
+	res.status(200).send();
 }
 ```
 
@@ -154,12 +176,15 @@ async function resetPassword(req: Request<any, any, ResetPasswordRequest>, res: 
 ```ts
 import type { VerifyEmailRequest } from "@/types";
 import type { Request, Response } from "express";
+import { BadRequestError } from "@/utils/errors";
 
 async function verifyEmail(req: Request<any, any, VerifyEmailRequest>, res: Response): Promise<void> {
 	// Validate input (OpenAPI middleware)
 	// Find user by verification token
+	if (isTokenInvalid) throw new BadRequestError("Invalid verification token");
 	// Mark email as verified
 	// Send 200 OK (no body)
+	res.status(200).send();
 }
 ```
 
@@ -172,11 +197,13 @@ async function verifyEmail(req: Request<any, any, VerifyEmailRequest>, res: Resp
 ```ts
 import type { GetCurrentUserResponse } from "@/types";
 import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/ApiResponse";
 
-async function getCurrentUser(req: Request, res: Response): Promise<void> {
+async function getCurrentUser(req: Request, res: Response<ApiResponse<GetCurrentUserResponse>>): Promise<void> {
 	// Get userId from req.user (auth middleware)
 	// Fetch user by ID
-	// Send user as JSON (GetCurrentUserResponse)
+	// Send a success response using the ApiResponse class.
+	res.status(200).json(new ApiResponse<GetCurrentUserResponse>(200, user, "User retrieved successfully"));
 }
 ```
 
@@ -185,11 +212,16 @@ async function getCurrentUser(req: Request, res: Response): Promise<void> {
 ```ts
 import type { UpdateProfileRequest, UpdateProfileResponse } from "@/types";
 import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/ApiResponse";
 
-async function updateProfile(req: Request<any, any, UpdateProfileRequest>, res: Response): Promise<void> {
+async function updateProfile(
+	req: Request<any, any, UpdateProfileRequest>,
+	res: Response<ApiResponse<UpdateProfileResponse>>
+): Promise<void> {
 	// Get userId from req.user
-	// Update display_name / username
-	// Return updated user as JSON (UpdateProfileResponse)
+	// Update displayName
+	// Send a success response using the ApiResponse class.
+	res.status(200).json(new ApiResponse<UpdateProfileResponse>(200, updatedUser, "Profile updated successfully"));
 }
 ```
 
@@ -198,17 +230,22 @@ async function updateProfile(req: Request<any, any, UpdateProfileRequest>, res: 
 ```ts
 import type { UpdateAvatarRequest, UpdateAvatarResponse } from "@/types";
 import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/ApiResponse";
 
-async function updateAvatar(req: Request, res: Response): Promise {
+async function updateAvatar(
+	req: Request<any, any, UpdateAvatarRequest>,
+	res: Response<ApiResponse<UpdateAvatarResponse>>
+): Promise<void> {
 	// Get userId from req.user
-	// Validate avatar_url format (should be valid URI)
-	// Update user's avatar_url in database
-	// Return updated user as JSON (UpdateAvatarResponse)
+	// Validate avatarUrl format (should be valid URI)
+	// Update user's avatarUrl in database
+	// Send a success response using the ApiResponse class.
+	res.status(200).json(new ApiResponse<UpdateAvatarResponse>(200, updatedUser, "Avatar updated successfully"));
 }
 ```
 
-- **Request:** `UpdateAvatarRequest` (contains `avatar_url`)
-- **Response:** `UpdateAvatarResponse` (`User` schema with updated avatar_url)
+- **Request:** `UpdateAvatarRequest` (contains `avatarUrl`)
+- **Response:** `ApiResponse<UpdateAvatarResponse>` (`User` schema with updated `avatarUrl`)
 
 #### `DELETE /users/me`
 
@@ -220,7 +257,35 @@ async function deleteUser(req: Request, res: Response): Promise<void> {
 	// Delete user and associated data
 	// Clear authentication cookies
 	// Send 204 No Content
+	res.status(204).send();
 }
 ```
 
 - **Response:** 204 No Content
+
+## Auth Middleware Setup
+
+### Authentication Middleware
+
+Create a middleware to verify JWT tokens and attach user info to the request:
+
+```ts
+import type { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import { UnauthorizedError } from "@/utils/errors";
+
+async function authenticate(req: Request, res: Response, next: NextFunction): Promise<void> {
+	// Extract token from cookie or Authorization header
+	// If no token is found, or if verification fails (invalid/expired),
+	// throw an UnauthorizedError. The global error handler will format the 401 response.
+	// Example: throw new UnauthorizedError("Authentication required. Please log in.");
+	// Attach user id to request object
+	// Call next()
+}
+
+export { authenticate };
+```
+
+**Error Responses:**
+
+- **401 Unauthorized:** Missing token, invalid token, or expired token. Throw `UnauthorizedError`.

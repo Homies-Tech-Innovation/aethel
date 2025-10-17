@@ -1,6 +1,6 @@
 # 03: Image Uploads
 
-**Purpose:** Implementation plan for image upload functionality, including validation, storage on Cloudinary, and REST endpoints for creating, retrieving, and deleting images. Assumes an Express.js application with user authentication and a NoSQL database schema.
+**Purpose:** Implementation plan for image upload functionality, including validation, storage on Cloudinary, and REST endpoints for creating, retrieving, and deleting images.
 
 ## Core Concepts
 
@@ -8,8 +8,8 @@
 
 - **Multer:** Middleware to parse `multipart/form-data`. Memory storage is used to stream the buffer directly to Cloudinary.
 - **Cloudinary:** Remote image hosting and CDN. Images are uploaded via `cloudinary.uploader.upload_stream` to avoid writing to disk.
-- **Authentication:** Requests must be authenticated. Assumes an existing JWT cookie/session system.
-- **Image Metadata:** Metadata is stored in a MongoDB with fields for user ID, document ID, folder ID, storage URL, filename, MIME type, and deletion status.
+- **Authentication:** Requests must be authenticated. With the existing JWT cookie system.
+- **Image Metadata:** Metadata is stored in a MongoDB as per the [Image Model](./04-DataBase-Design.md).
 
 ### Validation
 
@@ -33,12 +33,12 @@ CLOUDINARY_API_SECRET=<your_api_secret>
 In your application, configure Cloudinary using the `cloudinary.config` method:
 
 ```ts
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+	api_key: process.env.CLOUDINARY_API_KEY,
+	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 ```
 
@@ -53,13 +53,13 @@ Multer is a middleware for handling `multipart/form-data`, primarily used for up
 #### Example Usage:
 
 ```ts
-import multer from 'multer';
+import multer from "multer";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // Middleware to handle single file upload
-const singleImage = upload.single('file');
+const singleImage = upload.single("file");
 
 export { singleImage };
 ```
@@ -71,23 +71,24 @@ Cloudinary is a cloud-based service for image hosting and transformations. It pr
 #### Example Usage:
 
 ```ts
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary } from "cloudinary";
+import { UploadApiOptions, UploadApiResponse } from "cloudinary";
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+	api_key: process.env.CLOUDINARY_API_KEY,
+	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // Function to upload image buffer to Cloudinary
-async function uploadBufferToCloudinary(buffer: Buffer, options: any) {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(options, (error, result) => {
-      if (error) return reject(error);
-      resolve(result);
-    });
-    stream.end(buffer);
-  });
+async function uploadBufferToCloudinary(buffer: Buffer, options: UploadApiOptions): Promise<UploadApiResponse> {
+	return new Promise((resolve, reject) => {
+		const stream = cloudinary.uploader.upload_stream(options, (error, result) => {
+			if (error) return reject(error);
+			resolve(result);
+		});
+		stream.end(buffer);
+	});
 }
 
 export { uploadBufferToCloudinary };
@@ -101,7 +102,7 @@ Utility functions are used to streamline repetitive tasks, such as validating MI
 
 ```ts
 function validateMimeType(mimeType: string, allowedTypes: string[]): boolean {
-  return allowedTypes.includes(mimeType);
+	return allowedTypes.includes(mimeType);
 }
 
 export { validateMimeType };
@@ -113,102 +114,54 @@ export { validateMimeType };
 
 #### `POST /images`
 
-```ts
-import type { CreateImageRequest, CreateImageResponse } from "@/types";
+````ts
+import type { UploadImageRequest, UploadImageResponse } from "@/types";
 import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/ApiResponse";
+import { BadRequestError, ApiError } from "@/utils/errors";
 
-async function createImage(req: Request<any, any, CreateImageRequest>, res: Response): Promise<void> {
-  // Get userId from req.user (auth middleware)
-  // Validate input (Multer middleware)
-  // Validate MIME type against ALLOWED_IMAGE_MIMETYPES
-  // Upload image to Cloudinary
-  // Save metadata to database
-  // Return created image record (CreateImageResponse)
-  // Send 201 Created
-}
-```
+async function createImage(
+	req: Request<any, any, UploadImageRequest>,
+	res: Response<ApiResponse<UploadImageResponse>>
+): Promise<void> {
+	// Get userId from req.user (auth middleware)
+	// Validate input (Multer middleware)
+	if (!req.file) throw new BadRequestError("No file uploaded.");
+	// Validate MIME type against ALLOWED_IMAGE_MIMETYPES
+	if (!isValidMimeType) throw new ApiError(415, "Unsupported media type.");
+	// Upload image to Cloudinary
+	// Save metadata to database
+	// Return created image record using ApiResponse<UploadImageResponse>
+	res.status(201).json(new ApiResponse<UploadImageResponse>(201, newImage, "Image uploaded successfully"));
+}```
 
-- **Request:** `CreateImageRequest`
+- **Request:** `UploadImageRequest`
   - `file`: File (required, `multipart/form-data` field)
-  - `document_id`: UUID (optional, associates image with a document)
-- **Response:** `CreateImageResponse` (201 Created)
-  - `_id`: ObjectId
-  - `userId`: ObjectId
-  - `documentId`: ObjectId
-  - `folderId`: ObjectId
-  - `storageUrl`: string
-  - `filename`: string
-  - `mimeType`: string
-  - `pendingDelete`: boolean
-  - `markedForDeleteAt`: Date | null
-  - `createdAt`: Date
-  - `updatedAt`: Date
-- **Errors:** `400` (missing file), `401` (unauthorized), `415` (unsupported media type), `500` (server error).
+  - `documentId`: UUID (optional, associates image with a document)
+  - `folderId`: UUID (optional, associates image with a folder)
+- **Response:** `ApiResponse<UploadImageResponse>` (201 Created)
+- **Errors:** Throw `BadRequestError` for missing file, `UnauthorizedError` for auth failures, `ApiError(415, ...)` for unsupported media types.
 
 #### `GET /images/{id}`
 
 ```ts
 import type { GetImageResponse } from "@/types";
 import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/ApiResponse";
+import { NotFoundError } from "@/utils/errors";
 
-async function getImage(req: Request, res: Response): Promise<void> {
-  // Extract image ID from req.params.id
-  // Fetch image metadata from database
-  // Return image metadata (GetImageResponse)
-  // Send 404 if not found
+async function getImage(req: Request, res: Response<ApiResponse<GetImageResponse>>): Promise<void> {
+	// Extract image ID from req.params.id
+	// Fetch image metadata from database
+	if (!image) throw new NotFoundError("Image not found");
+	// Return image metadata using ApiResponse<GetImageResponse>
+	res.status(200).json(new ApiResponse<GetImageResponse>(200, image, "Image retrieved successfully"));
 }
-```
+````
 
-- **Response:** `GetImageResponse` (200 OK)
-  - `_id`: ObjectId
-  - `userId`: ObjectId
-  - `documentId`: ObjectId
-  - `folderId`: ObjectId
-  - `storageUrl`: string
-  - `filename`: string
-  - `mimeType`: string
-  - `pendingDelete`: boolean
-  - `markedForDeleteAt`: Date | null
-  - `createdAt`: Date
-  - `updatedAt`: Date
-- **Errors:** `404` (not found).
-
-#### `DELETE /images/{id}`
-
-```ts
-import type { Request, Response } from "express";
-
-async function deleteImage(req: Request, res: Response): Promise<void> {
-  // Extract image ID from req.params.id
-  // Fetch image metadata from database
-  // Verify ownership or admin privileges
-  // Delete image from Cloudinary
-  // Mark image as pending delete in database
-  // Send 204 No Content
-}
-```
-
-- **Response:** `204 No Content`
-- **Errors:** `401` (unauthorized), `403` (forbidden), `404` (not found), `500` (server error).
-
-## Implementation Notes
-
-### Authorization Checks
-
-Always verify ownership before any operation:
-
-```ts
-if (image.userId.toString() !== req.user._id.toString()) {
-  return res.status(404).json({
-    error: "Not Found",
-    message: "Image not found",
-  });
-}
-```
-
-Use `404` instead of `403` to avoid leaking resource existence.
+- **Response:** `ApiResponse<GetImageResponse>` (200 OK)
+- **Errors:** Throw `NotFoundError` if not found
 
 ### Cascading Deletes
 
 When deleting an image, ensure both the Cloudinary resource and the database record are removed. Handle errors gracefully to avoid partial deletions.
-

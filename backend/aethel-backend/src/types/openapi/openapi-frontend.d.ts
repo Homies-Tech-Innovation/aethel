@@ -28,9 +28,7 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @example John Doe */
-                        display_name: string;
-                        /** @example johndoe */
-                        username: string;
+                        displayName: string;
                         /**
                          * Format: email
                          * @example john.doe@example.com
@@ -180,7 +178,7 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @example hygbYGIYU... */
-                        verification_token: string;
+                        verificationToken: string;
                     };
                 };
             };
@@ -273,12 +271,12 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @example the-unique-token-from-the-email-link... */
-                        reset_token: string;
+                        resetToken: string;
                         /**
                          * Format: password
                          * @example a-new-strong-password
                          */
-                        new_password: string;
+                        newPassword: string;
                     };
                 };
             };
@@ -399,7 +397,7 @@ export interface paths {
         head?: never;
         /**
          * Update Current User's Profile
-         * @description Updates profile information like display_name or username.
+         * @description Updates profile information like displayName.
          */
         patch: {
             parameters: {
@@ -412,9 +410,7 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @example John Doe */
-                        display_name?: string;
-                        /** @example johndoe123 */
-                        username?: string;
+                        displayName?: string;
                     };
                 };
             };
@@ -465,7 +461,7 @@ export interface paths {
                          * Format: uri
                          * @example https://cdn.example.com/avatars/user123.png
                          */
-                        avatar_url: string;
+                        avatarUrl: string;
                     };
                 };
             };
@@ -554,7 +550,7 @@ export interface paths {
                          * Format: uuid
                          * @example null
                          */
-                        parent_id?: string | null;
+                        parentId?: string | null;
                     };
                 };
             };
@@ -645,7 +641,7 @@ export interface paths {
         head?: never;
         /**
          * Update Folder
-         * @description Updates a folder's name or parent.
+         * @description Updates a folder's name.
          */
         patch: {
             parameters: {
@@ -661,8 +657,6 @@ export interface paths {
                     "application/json": {
                         /** @example Updated Folder Name */
                         name?: string;
-                        /** Format: uuid */
-                        parent_id?: string | null;
                     };
                 };
             };
@@ -707,7 +701,7 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @example My Note.md */
-                        file_name: string;
+                        fileName: string;
                         /** @example # Hello World
                          *
                          *     This is **markdown** content */
@@ -716,7 +710,7 @@ export interface paths {
                          * Format: uuid
                          * @example null
                          */
-                        folder_id?: string | null;
+                        folderId?: string | null;
                     };
                 };
             };
@@ -822,11 +816,11 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @example Updated Note.md */
-                        file_name?: string;
+                        fileName?: string;
                         /** @example # Updated Content */
                         content?: string;
                         /** Format: uuid */
-                        folder_id?: string | null;
+                        folderId?: string | null;
                     };
                 };
             };
@@ -876,7 +870,12 @@ export interface paths {
                          * Format: uuid
                          * @description Optionally associate image with a document.
                          */
-                        document_id?: string;
+                        documentId?: string;
+                        /**
+                         * Format: uuid
+                         * @description Optionally associate image with a folder for hierarchy.
+                         */
+                        folderId?: string;
                     };
                 };
             };
@@ -937,32 +936,7 @@ export interface paths {
         };
         put?: never;
         post?: never;
-        /**
-         * Delete Image
-         * @description Deletes an image.
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Image deleted successfully */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                401: components["responses"]["Unauthorized"];
-                404: components["responses"]["NotFound"];
-            };
-        };
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1028,8 +1002,8 @@ export interface paths {
         /**
          * Send a message to the AI
          * @description Sends a user's message to the AI for processing.
-         *     - To start a new chat, omit `chat_session_id`. The server will create a new session and return its ID.
-         *     - To continue an existing chat, provide the `chat_session_id`.
+         *     - To start a new chat, omit `chatSessionId`. The server will create a new session and return its ID.
+         *     - To continue an existing chat, provide the `chatSessionId`.
          */
         post: {
             parameters: {
@@ -1045,7 +1019,7 @@ export interface paths {
                          * Format: uuid
                          * @description Provide to continue an existing chat, or null to start a new one.
                          */
-                        chat_session_id?: string | null;
+                        chatSessionId?: string | null;
                         /** @example Can you refactor this document to be more concise? */
                         message: string;
                     };
@@ -1233,77 +1207,72 @@ export interface components {
         User: {
             /** Format: uuid */
             id?: string;
-            username?: string;
-            display_name?: string;
+            displayName?: string;
             /** Format: email */
             email?: string;
             /** Format: uri */
-            avatar_url?: string | null;
+            avatarUrl?: string | null;
             /** Format: date-time */
-            created_at?: string;
+            createdAt?: string;
             /** Format: date-time */
-            updated_at?: string;
+            updatedAt?: string;
         };
         Folder: {
             /** Format: uuid */
             id?: string;
             /** Format: uuid */
-            user_id?: string;
+            userId?: string;
             /** Format: uuid */
-            parent_id?: string | null;
+            parentId?: string | null;
             name?: string;
             /** Format: date-time */
-            created_at?: string;
+            createdAt?: string;
             /** Format: date-time */
-            updated_at?: string;
+            updatedAt?: string;
         };
         Document: {
             /** Format: uuid */
             id?: string;
             /** Format: uuid */
-            user_id?: string;
+            userId?: string;
             /** Format: uuid */
-            folder_id?: string | null;
+            folderId?: string | null;
             /** @example My Note.md */
-            file_name?: string;
+            fileName?: string;
             /** @example # Hello World
              *
              *     This is **markdown** */
             content?: string;
             /** Format: date-time */
-            created_at?: string;
+            createdAt?: string;
             /** Format: date-time */
-            updated_at?: string;
+            updatedAt?: string;
         };
         Image: {
             /** Format: uuid */
             id?: string;
             /** Format: uuid */
-            user_id?: string;
+            userId?: string;
             /** Format: uuid */
-            document_id?: string | null;
+            documentId?: string | null;
+            /** Format: uuid */
+            folderId?: string | null;
             /** @example https://cdn.example.com/images/abc123.png */
-            storage_url?: string;
+            storageUrl?: string;
             /** @example screenshot.png */
             filename?: string;
             /** @example image/png */
-            mime_type?: string;
+            mimeType?: string;
             /** Format: date-time */
-            created_at?: string;
+            createdAt?: string;
             /** Format: date-time */
-            updated_at?: string;
+            updatedAt?: string;
         };
         WorkspaceNode: {
-            /** Format: uuid */
             id?: string;
-            /** @example My Documents */
             name?: string;
-            /**
-             * @example folder
-             * @enum {string}
-             */
-            type?: "folder" | "document";
-            /** @description Present and non-empty only if the type is 'folder'. */
+            /** @enum {string} */
+            type?: "folder" | "file";
             children?: components["schemas"]["WorkspaceNode"][];
         };
         ChatSessionSummary: {
@@ -1312,7 +1281,7 @@ export interface components {
             /** @example Concise refactoring discussion */
             title?: string;
             /** Format: date-time */
-            created_at?: string;
+            createdAt?: string;
         };
         ChatMessage: {
             /** @enum {string} */
@@ -1322,9 +1291,9 @@ export interface components {
              * Format: uuid
              * @description The ID to fetch the content of an AI suggestion, if one was made.
              */
-            suggestion_id?: string | null;
+            suggestionId?: string | null;
             /** Format: date-time */
-            created_at?: string;
+            createdAt?: string;
         };
         ChatSession: {
             /** Format: uuid */
@@ -1336,9 +1305,9 @@ export interface components {
              * Format: uuid
              * @description The ID of the document to be updated.
              */
-            document_id?: string;
+            documentId?: string;
             /** @description The original filename, for context on the frontend. */
-            file_name?: string;
+            fileName?: string;
             /** @description The new, suggested content for the document. */
             content?: string;
         }[];
@@ -1347,9 +1316,9 @@ export interface components {
              * Format: uuid
              * @description The unique identifier for the chat session. This is returned on every interaction.
              */
-            chat_session_id?: string;
+            chatSessionId?: string;
             /** @description The AI's response message. */
-            ai_message?: components["schemas"]["ChatMessage"];
+            aiMessage?: components["schemas"]["ChatMessage"];
         };
         Error: {
             error?: string;

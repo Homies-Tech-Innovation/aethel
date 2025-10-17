@@ -14,8 +14,8 @@ Thank you for contributing to Aethel! Please fill out the sections below.
 ### 🔗 Linked Issue
 
 - Is this contribution related to a specific issue?
-  - **Yes:** Closes #`[Replace with the issue number]`
-  - **No:** Explain why this change is needed below.
+  - **Yes** Closes #`[Replace with the issue number]`
+  - **No** Explain why this change is needed below.
 
 ### 📝 Description of Changes
 
