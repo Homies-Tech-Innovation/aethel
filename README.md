@@ -22,6 +22,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-%23007ACC.svg?style=flat&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-%2320232a.svg?style=flat&logo=react&logoColor=%2361DAFB)
 ![Express.js](https://img.shields.io/badge/Express.js-%23404d59.svg?style=flat&logo=express&logoColor=%2361DAFB)
+![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=flat&logo=mongodb&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3670A0?style=flat&logo=python&logoColor=ffdd54)
 ![LangChain](https://img.shields.io/badge/LangChain-ffffff?style=flat&logo=langchain&logoColor=1C3C3C)
 ![Docker](https://img.shields.io/badge/Docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white)
@@ -33,11 +34,6 @@
 **Aethel** is a beautifully designed Markdown editor featuring an integrated AI-powered chat assistant.
 
 </div>
-
-## 📅 Current Active Sprint: Sprint 1
-
-**Focus:** Documentation & Architecture  
-Check open issues labeled with **`sprint-1`** to find tasks currently being accepted for contributions.
 
 ## 🚀 Participate in Hacktoberfest 2025
 

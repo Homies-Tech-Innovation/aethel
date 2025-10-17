@@ -1,37 +1,25 @@
 # 🧩 Contributing to Aethel
 
-We follow a **documentation-first development process** — all architectural and design decisions are written down before implementation begins.
+Thank you for your interest in contributing to **Aethel**! We're excited to have you as part of our community.
 
-## 📘 What “Documentation-First” Means
+## 🎯 How to Contribute
 
-- All **application architecture, design plans, and workflows** are first documented in Markdown files.
-- These documents are then broken down into **issues or tasks**.
-- Issues are grouped and tracked through **sprints**.
+We use a **sprint-based development workflow**. Issues are released in batches as we progress through different phases of the project.
 
-If there aren’t many issues open, it means we’re currently in the documentation phase.  
-New tasks and issues will be added as documentation evolves.
+### Finding Issues to Work On
 
-If you’re contributing documentation, please follow our [documentation guidelines](./docs/index.md).
+- **Only work on issues labeled `help-wanted`** — these are the tasks currently open for community contributions.
+- Issues are organized into sprints, and we release `help-wanted` issues as each sprint becomes active.
+- If you don't see many open issues right now, it means we're working on the current sprint internally. **Star the repository** to get notified when new issues are released.
 
-## 🏃 Working on a Sprint
+> [!IMPORTANT] > **Do not ask to be assigned issues from future sprints.** We release issues progressively to ensure quality and proper sequencing.
 
-Always pick an **active sprint issue** and create a pull request (PR) linked to it.  
-Refer to the latest sprint details in the [README.md](./README.md).
+### Claiming an Issue
 
-You can also join our community server to get early notifications when new sprints begin.
-
-## ⚠️ Protocol for Major Design Decisions
-
-Because Aethel follows a **documentation-first** model, certain issues require collaborative consensus _before_ a full document is written to prevent wasted effort.
-
-For any issue involving a **Major Design Decision** (e.g., database choice, core AI architecture, or state management framework), you must follow this protocol:
-
-1.  **Start a Discussion Thread:** After claiming the issue, immediately create a thread in our Discord server (or post a comment on the GitHub issue if Discord is inaccessible).
-2.  **Propose a Solution:** Briefly outline your proposed decision (e.g., "I propose using PostgreSQL over MongoDB because...") along with your core reasoning.
-3.  **Seek Consensus:** Wait for a maintainer or key community member to acknowledge, review, and confirm your approach.
-4.  **Begin Writing:** Only after receiving confirmation should you proceed to write the full documentation.
-
-**Issues requiring this protocol are typically those labeled `research` or those asking for a fundamental `choice`.**
+1. **Comment on the issue** to request assignment.
+2. Wait for a maintainer to assign it to you.
+3. Once assigned, you have **24 hours** to open a pull request.
+4. If no PR is submitted within 24 hours, the issue will be reassigned to someone else.
 
 ## 🏅 Duplicate PRs
 
@@ -52,11 +40,22 @@ To receive faster feedback:
 
 - Join our [Discord server](https://discord.com/invite/HP2YPGSrWU) to discuss your ideas directly with maintainers.
 - GitHub comment sections may receive slower responses.
-- Ensure you’ve reviewed the **Discord Rules** outlined in [README.md](./README.md) before joining.
+- Ensure you've reviewed the **Discord Rules** outlined in [README.md](./README.md) before joining.
+
+## 📘 Documentation
+
+All application architecture and design decisions are documented in our `docs/` folder.  
+Before starting on an issue, we recommend:
+
+- Reading the relevant documentation for context.
+- Understanding the overall architecture and patterns we follow.
+- Asking questions in Discord if anything is unclear.
+
+Following our documentation ensures your contributions align with the project's vision and increases the likelihood of your PR being merged.
 
 ## 💡 Pro Tip
 
 Read through the project documentation and existing issues before starting your contribution.  
 Understanding the context makes your PRs stronger, more aligned, and more likely to be merged quickly.
 
-Together, we’re building a smarter, more delightful writing experience — welcome aboard!
+Together, we're building a smarter, more delightful writing experience — welcome aboard!
