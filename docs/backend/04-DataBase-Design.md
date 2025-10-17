@@ -176,14 +176,18 @@ function buildTree(parentId: string | null, items: WorkspaceNode[]): WorkspaceNo
 function extractImageReferences(content: string): string[];
 ```
 
-**Purpose**: Parse document content and extract all image fileNames/URLs.
+**Purpose**: Parse document content and extract all image URLs.
 
 **Algorithm**:
 
-1. Define a regex pattern for image syntax (to be determined during implementation).
-2. Use `content.matchAll(regex)` to find all image references.
-3. Extract the fileName or URL from each match.
-4. Return an array of unique image references.
+1.  Initialize an empty array, `imageUrls`, to store the results.
+2.  Use a `try-catch` block to handle potential JSON parsing errors.
+3.  Inside the `try` block, parse the `content` string into a JavaScript object using `JSON.parse()`.
+4.  Iterate through the parsed array of objects. For each object:
+    - If the object's `type` property is `"image"`, extract the `url` from its `props` property.
+    - Add the extracted `url` to the `imageUrls` array.
+5.  If parsing fails, log the error and return an empty array to prevent crashes.
+6.  Return the `imageUrls` array.
 
 ### 2. Mark Images for Deletion
 
@@ -191,30 +195,50 @@ function extractImageReferences(content: string): string[];
 async function markImagesForDeletion(documentId: string, oldContent: string, newContent: string): Promise<number>;
 ```
 
-**Purpose**: Detect deleted images by comparing old vs. new content.
+**Purpose**: Detect deleted images by comparing old vs. new content and mark them for deletion.
 
 **Algorithm**:
 
-1. Extract image references from `oldContent` using `extractImageReferences()`.
-2. Extract image references from `newContent` using `extractImageReferences()`.
-3. Find deleted images: `deletedImages = oldContent images NOT in newContent images`.
-4. Query the Images collection where `documentId` matches AND `fileName` is in the `deletedImages` array.
-5. Update matched images: set `pendingDelete: true` and `markedForDeleteAt: new Date()`.
-6. Return the count of images marked.
+1.  Extract image URLs from `oldContent` using `extractImageReferences()`.
+2.  Extract image URLs from `newContent` using `extractImageReferences()`.
+3.  Find deleted image URLs: `deletedImages = oldContent URLs NOT in newContent URLs`.
+4.  Query the Images collection where `documentId` matches AND `storageUrl` is in the `deletedImages` array.
+5.  Update matched images: set `pendingDelete: true` and `markedForDeleteAt: new Date()`.
+6.  Return the count of images marked.
 
-### 3. Mark All Document Images for Deletion
+### 3. Unmark Images for Deletion
+
+```ts
+async function unmarkImagesForDeletion(documentId: string, oldContent: string, newContent: string): Promise<number>;
+```
+
+**Purpose**: Detect restored images (re-added) and remove their pending deletion status.
+
+**Algorithm**:
+
+1.  Extract image URLs from `oldContent` using `extractImageReferences()`.
+2.  Extract image URLs from `newContent` using `extractImageReferences()`.
+3.  Find restored image URLs: `restoredImages = newContent URLs NOT in oldContent URLs`.
+4.  Query the Images collection where:
+    - `documentId` matches.
+    - `storageUrl` is in the `restoredImages` array.
+    - `pendingDelete === true`.
+5.  Update matched images: set `pendingDelete: false` and `markedForDeleteAt: null`.
+6.  Return the count of images restored.
+
+### 4. Mark All Document Images for Deletion
 
 ```ts
 async function markAllDocumentImagesForDeletion(documentId: string): Promise<number>;
 ```
 
-**Purpose**: Mark all images in a document when the document is deleted.
+**Purpose**: Mark all images in a document when the document itself is deleted.
 
 **Algorithm**:
 
-1. Query the Images collection where `documentId` matches.
-2. Update all matched images: set `pendingDelete: true` and `markedForDeleteAt: new Date()`.
-3. Return the count of images marked.
+1.  Query the Images collection where `documentId` matches.
+2.  Update all matched images: set `pendingDelete: true` and `markedForDeleteAt: new Date()`.
+3.  Return the count of images marked.
 
 ## Background Cleanup Job (Cron)
 
@@ -224,26 +248,26 @@ async function markAllDocumentImagesForDeletion(documentId: string): Promise<num
 async function cleanupExpiredImages(graceHours: number = 48);
 ```
 
-**Purpose**: Permanently delete images past the grace period.
+**Purpose**: Permanently delete images that have been in a pending-delete state past the grace period.
 
 **Schedule**: Runs every 6 hours via a cron job.
 
 **Algorithm**:
 
-1. Calculate the cutoff date: `cutoffDate = currentDate - graceHours`.
-2. Query the Images collection where:
-   - `pendingDelete === true`
-   - `markedForDeleteAt <= cutoffDate`
-3. For each image found:
-   - Extract `publicId` from `storageUrl` (Cloudinary identifier).
-   - Call the Cloudinary API to delete the image: `await cloudinary.uploader.destroy(publicId)`.
-   - If Cloudinary deletion succeeds:
-     - Delete the image document from the database.
-   - If Cloudinary deletion fails:
-     - Log the error for monitoring.
-     - Skip database deletion (will retry in the next run).
-4. Return an object with counts: `{ deleted: number, failed: number }`.
-5. Log results for monitoring.
+1.  Calculate the cutoff date: `cutoffDate = currentDate - graceHours`.
+2.  Query the Images collection where:
+    - `pendingDelete === true`
+    - `markedForDeleteAt <= cutoffDate`
+3.  For each image found:
+    - Extract `publicId` from `storageUrl` (Cloudinary identifier).
+    - Call the Cloudinary API to delete the image: `await cloudinary.uploader.destroy(publicId)`.
+    - If Cloudinary deletion succeeds:
+      - Delete the image document from the database.
+    - If Cloudinary deletion fails:
+      - Log the error for monitoring.
+      - Skip database deletion (it will be retried in the next run).
+4.  Return an object with counts: `{ deleted: number, failed: number }`.
+5.  Log results for monitoring.
 
 **Cron Setup**:
 
