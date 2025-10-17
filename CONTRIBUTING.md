@@ -12,7 +12,8 @@ We use a **sprint-based development workflow**. Issues are released in batches a
 - Issues are organized into sprints, and we release `help-wanted` issues as each sprint becomes active.
 - If you don't see many open issues right now, it means we're working on the current sprint internally. **Star the repository** to get notified when new issues are released.
 
-> [!IMPORTANT] > **Do not ask to be assigned issues from future sprints.** We release issues progressively to ensure quality and proper sequencing.
+> [!IMPORTANT]
+> **Do not ask to be assigned issues from future sprints.** We release issues progressively to ensure quality and proper sequencing.
 
 ### Claiming an Issue
 
