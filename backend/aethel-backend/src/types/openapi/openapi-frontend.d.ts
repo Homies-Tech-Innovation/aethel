@@ -801,7 +801,7 @@ export interface paths {
         head?: never;
         /**
          * Update Document
-         * @description Updates a document's content, filename, or folder.
+         * @description Updates a document's content, fileName, or folder.
          */
         patch: {
             parameters: {
@@ -1260,7 +1260,7 @@ export interface components {
             /** @example https://cdn.example.com/images/abc123.png */
             storageUrl?: string;
             /** @example screenshot.png */
-            filename?: string;
+            fileName?: string;
             /** @example image/png */
             mimeType?: string;
             /** Format: date-time */
@@ -1306,7 +1306,7 @@ export interface components {
              * @description The ID of the document to be updated.
              */
             documentId?: string;
-            /** @description The original filename, for context on the frontend. */
+            /** @description The original fileName, for context on the frontend. */
             fileName?: string;
             /** @description The new, suggested content for the document. */
             content?: string;
