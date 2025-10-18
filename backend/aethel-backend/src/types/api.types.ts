@@ -1,4 +1,4 @@
-import type { paths, components } from "./openapi/openapi-frontend"; // Assuming the generated file is named openapi-types.ts
+import type { components, paths } from "@/types/openapi/openapi-frontend";
 
 // ============================================
 // AUTHENTICATION ENDPOINTS

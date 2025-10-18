@@ -1,12 +1,11 @@
-//Tested 
-export {ApiError} from "./ApiError";
+// Api Error Classes
+export { ApiError } from "@/utils/errors/ApiError";
 
 export {
-  BadRequestError,
-  UnauthorizedError,
-  ForbiddenError,
-  NotFoundError,
-  ConflictError,
-  InternalServerError,
-} from "./SpecialErrors";
-
+	BadRequestError,
+	ConflictError,
+	ForbiddenError,
+	InternalServerError,
+	NotFoundError,
+	UnauthorizedError,
+} from "@/utils/errors/SpecialErrors";
