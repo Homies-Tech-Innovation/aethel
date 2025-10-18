@@ -137,9 +137,9 @@ To avoid littering our controllers with repetitive `try...catch` blocks for asyn
 **Location:** `src/utils/asyncHandler.ts`
 
 ```ts
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 
-const asyncHandler = (fn: Function) => {
+export const asyncHandler = (fn: RequestHandler): RequestHandler => {
 	return (req: Request, res: Response, next: NextFunction) => {
 		Promise.resolve(fn(req, res, next)).catch(next);
 	};
