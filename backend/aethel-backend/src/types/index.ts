@@ -1,2 +1,1 @@
-export * from "./api.types";
-export * as DB from "./database";
+export * from "@/types/api.types";
