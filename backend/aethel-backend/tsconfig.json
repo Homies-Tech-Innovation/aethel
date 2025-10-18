@@ -3,6 +3,7 @@
 		"paths": {
 			"@/*": ["./src/*"]
 		},
+    	"typeRoots": ["./node_modules/@types"],
 		"allowJs": true,
 		"checkJs": false,
 		"target": "ES2022",
