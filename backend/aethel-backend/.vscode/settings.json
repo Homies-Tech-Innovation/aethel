@@ -11,9 +11,6 @@
 	"javascript.updateImportsOnFileMove.enabled": "always",
 	"typescript.suggest.paths": true,
 	"javascript.suggest.paths": true,
-	"editor.codeActionsOnSave": {
-		"source.organizeImports": "explicit"
-	},
 	"files.exclude": {
 		"**/node_modules": true,
 		"**/dist": true
