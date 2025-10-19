@@ -15,9 +15,10 @@ cp .env.docker.example .env.docker
 Edit `.env` and fill in your PostgreSQL credentials:
 
 ```bash
-POSTGRES_USER=myuser
-POSTGRES_PASSWORD=mypassword
-POSTGRES_DB=aethel_db
+# Database configuration
+MONGO_INITDB_ROOT_USERNAME=aditsuru
+MONGO_INITDB_ROOT_PASSWORD=secret123
+MONGO_INITDB_DATABASE=aethel_db
 ```
 
 ### 2️⃣ Start the Containers
@@ -30,7 +31,7 @@ docker compose up -d
 
 This will start:
 
-- **PostgreSQL** (port `5432`)
+- **MongoDB** (port `27017`)
 - **Swagger UI** (port `8080`)
 - **Swagger Editor** (port `8081`)
 
@@ -50,7 +51,7 @@ npm run dev
 Your backend will connect to the database running in Docker via:
 
 ```
-postgresql://myuser:mypassword@localhost:5432/aethel_db
+mongodb://aditsuru:secret123@localhost:27017/aethel_db
 ```
 
 ## 🧰 Quick Commands
@@ -90,7 +91,7 @@ docker compose logs -f swagger-editor
 ### Connect to Postgres shell:
 
 ```bash
-docker exec -it aethel-postgres-db psql -U myuser -d aethel_db
+docker exec -it aethel-mongo-db mongo -u aditsuru -p secret123 --authenticationDatabase admin
 ```
 
 ### Manage Docker volumes:
@@ -109,9 +110,9 @@ This file is **read by Docker only**. It defines the container’s environment �
 **Example `.env.docker.example`:**
 
 ```bash
-POSTGRES_USER=myuser
-POSTGRES_PASSWORD=mypassword
-POSTGRES_DB=aethel_db
+MONGO_INITDB_ROOT_USERNAME=aditsuru
+MONGO_INITDB_ROOT_PASSWORD=secret123
+MONGO_INITDB_DATABASE=aethel_db
 ```
 
 **Rules:**
@@ -122,7 +123,7 @@ POSTGRES_DB=aethel_db
 ## 📝 Notes
 
 - `.env.docker` contains **sensitive credentials** — never commit it.
-- Postgres data is persisted in the Docker volume (`pg_data`) — don’t delete unless you want a clean slate.
+- MongoDB data is persisted in the Docker volume (`mongo_data`) — don’t delete unless you want a clean slate.
 - Swagger UI reads from `./openapi.yaml`. Any changes to that file are reflected automatically when refreshed.
 - If Swagger doesn’t reload, restart it with:
 
