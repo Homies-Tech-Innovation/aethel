@@ -3,7 +3,11 @@ import "dotenv/config";
 
 const EnvSchema = z.object({
   // MongoDB
-  MONGODB_URI: z.string().url("MONGODB_URI must be a valid MongoDB connection URL"),
+  MONGODB_USERNAME: z.string().min(1, "MONGODB_USERNAME is required"),
+  MONGODB_PASSWORD: z.string().min(1, "MONGODB_PASSWORD is required"),
+  MONGODB_HOST: z.string().min(1, "MONGODB_HOST is required"),
+  MONGODB_PORT: z.string().regex(/^\d+$/, "MONGODB_PORT must be a valid port number").transform(Number),
+  MONGODB_DATABASE: z.string().min(1, "MONGODB_DATABASE is required"),
 
   // JWT
   ACCESS_TOKEN_SECRET: z.string().min(1, "ACCESS_TOKEN_SECRET is required"),
@@ -24,7 +28,10 @@ const EnvSchema = z.object({
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
-});
+}).transform((env) => ({
+  ...env,
+  MONGODB_URI: `mongodb://${env.MONGODB_USERNAME}:${env.MONGODB_PASSWORD}@${env.MONGODB_HOST}:${env.MONGODB_PORT}`,
+}));
 
 // Validate process.env
 const parsedEnv = EnvSchema.safeParse(process.env);

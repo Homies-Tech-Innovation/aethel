@@ -20,15 +20,17 @@ services:
     # restart: unless-stopped
 
   db:
-    image: postgres:latest
-    container_name: aethel-postgres-db
-    ports:
-      - "5432:5432"
-    restart: unless-stopped
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-    env_file:
-      - .env.docker
+      image: mongo:latest
+      container_name: aethel-mongo-db
+      ports:
+        - "27017:27017"
+      restart: unless-stopped
+      volumes:
+        - mongo_data:/data/db
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+        MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+        # MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
 
 volumes:
-  pg_data:
+  mongo_data:

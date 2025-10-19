@@ -1,0 +1,22 @@
+services:
+  db:
+      image: mongo:latest
+      container_name: aethel-mongo-db
+      ports:
+        - "27017:27017"
+      restart: unless-stopped
+      volumes:
+        - mongo_data:/data/db
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+        MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+        # MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+      networks:
+        - aethel-network
+
+volumes:
+  mongo_data:
+
+networks:
+  aethel-network:
+    driver: bridge
