@@ -1,7 +1,7 @@
-import Env from "./config"
-import { connectDB } from "./config/database";
+import { config } from "@/config";
+import { connectDB } from "@/config";
 
 connectDB();
 
 console.log("Environment Configuration Loaded:");
-console.log(Env);
+console.log(config);
