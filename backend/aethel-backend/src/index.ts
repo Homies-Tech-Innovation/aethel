@@ -1,7 +1,6 @@
-import { config } from "@/config";
-import { connectDB } from "@/config";
+import { connectDB, config } from "@/config";
+import { logger } from "@/utils";
 
 connectDB();
 
-console.log("Environment Configuration Loaded:");
-console.log(config);
+logger.info(config, "Environment Configuration Loaded:");

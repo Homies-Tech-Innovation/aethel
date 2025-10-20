@@ -1,6 +1,12 @@
 import * as z from "zod";
 import "dotenv/config";
 
+export enum NodeEnv {
+	Development = "development",
+	Production = "production",
+	Test = "test",
+}
+
 const EnvSchema = z
 	.object({
 		// MongoDB
@@ -23,10 +29,14 @@ const EnvSchema = z
 
 		// Pino Logger
 		LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
+
+		// Runtime environment
+		NODE_ENV: z.enum(NodeEnv).default(NodeEnv.Development),
 	})
 	.transform((env) => ({
 		...env,
 		MONGODB_URI: `mongodb://${env.MONGODB_USERNAME}:${env.MONGODB_PASSWORD}@${env.MONGODB_HOST}:${env.MONGODB_PORT}`,
+		isDev: env.NODE_ENV === NodeEnv.Development,
 	}));
 
 // Validate process.env
