@@ -7,7 +7,7 @@ services:
     environment:
       - SWAGGER_JSON=/app/openapi.yaml
     volumes:
-      - ./api-specs/openapi.yaml:/app/openapi.yaml:ro
+      - ${OPENAPI_SPEC_PATH}:/app/openapi.yaml:ro
     # restart: unless-stopped
 
   swagger-editor:
@@ -16,7 +16,7 @@ services:
     ports:
       - "8081:8080"
     volumes:
-      - ./api-specs/openapi.yaml:/openapi.yaml:ro
+      - ${OPENAPI_SPEC_PATH}:/app/openapi.yaml:ro
     # restart: unless-stopped
 
   db:
