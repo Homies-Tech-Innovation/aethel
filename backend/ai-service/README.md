@@ -10,4 +10,4 @@ uv run datamodel-codegen --input-file-type openapi --input ../../api-specs/opena
 ```
 
 ## TODO:
-- [ ] adjust command's --input and --output to match project structure
+- [ ] Adjust datamodel-codegen command's --input and --output to match project structure
