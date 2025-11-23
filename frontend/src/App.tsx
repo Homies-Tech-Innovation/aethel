@@ -17,7 +17,7 @@ interface GitHubStats {
 
 export default function TeamPage() {
   const members: Member[] = [
-    { username: "aditsuru-git", name: "Adit Suru" },
+    { username: "aditsuru", name: "Adit Suru" },
     { username: "CheefLofter", name: "Cheef Lofter" },
     { username: "duy4nt", name: "Duy Ant" },
   ];
